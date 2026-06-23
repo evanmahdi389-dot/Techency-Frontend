@@ -1169,7 +1169,8 @@ export default function DemoPage() {
   useEffect(() => {
     const fetchDemo = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/demo/${linkId}`);
+        const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+        const res = await axios.get(`${baseUrl}/demo/${linkId}`);
         setData(res.data.data);
       } catch (err) {
         setError(err.response?.data?.message || 'Demo link not found or expired');
@@ -1266,7 +1267,7 @@ export default function DemoPage() {
               {/* LAYER 0: Pure HTML5 Streaming Video Node */}
               <video
                 ref={videoRef}
-                src={`http://localhost:5000/api/videos/stream/${activeVideo.drive_file_id}`}
+                src={`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api'}/videos/stream/${activeVideo.drive_file_id}`}
                 autoPlay={isPlaying}
                 controls={false} // কোনো ডিফল্ট বা গুগলের বাটন আসবে না
                 playsInline // মোবাইলে জোর করে ফুলস্ক্রিন প্লেয়ার আসা ব্লক করবে
