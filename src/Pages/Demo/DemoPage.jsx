@@ -1142,6 +1142,34 @@ export default function DemoPage() {
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
+  // Touch states for mobile swipe to change video
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
+  const minSwipeDistance = 50;
+
+  const handleTouchStart = (e) => {
+    setTouchEnd(null); // Reset touch end
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe && activeIdx < videos?.length - 1) {
+      goTo(activeIdx + 1);
+    }
+    if (isRightSwipe && activeIdx > 0) {
+      goTo(activeIdx - 1);
+    }
+  };
+
   // সম্পূর্ণ বাটন ও ক্লিক ট্র্যাকিং নিখুঁত করার প্লে/পজ হ্যান্ডলার
   const togglePlay = useCallback(() => {
     if (videoRef.current) {
@@ -1262,7 +1290,13 @@ export default function DemoPage() {
 
           {/* Video Layer Section */}
           {activeVideo && (
-            <div className="demo-video-wrap video-fade group relative bg-black rounded-2xl overflow-hidden shadow-2xl" key={videoKey}>
+            <div
+              className="demo-video-wrap video-fade group relative bg-black rounded-2xl overflow-hidden shadow-2xl"
+              key={videoKey}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+            >
 
               {/* LAYER 0: Pure HTML5 Streaming Video Node */}
               <video
@@ -1304,8 +1338,8 @@ export default function DemoPage() {
                     togglePlay();
                   }}
                   className={`w-16 h-16 md:w-20 md:h-20 flex items-center justify-center rounded-full backdrop-blur-md border border-white/30 transition-all transform hover:scale-105 pointer-events-auto ${isPlaying
-                      ? 'bg-black/20 hover:bg-black/40 opacity-0 group-hover:opacity-100'
-                      : 'bg-black/40 hover:bg-black/60 shadow-[0_0_30px_rgba(0,0,0,0.5)] opacity-100'
+                    ? 'bg-black/20 hover:bg-black/40 opacity-0 group-hover:opacity-100'
+                    : 'bg-black/40 hover:bg-black/60 shadow-[0_0_30px_rgba(0,0,0,0.5)] opacity-100'
                     }`}
                 >
                   {!isPlaying ? (
@@ -1321,9 +1355,9 @@ export default function DemoPage() {
 
                 {/* Bottom Progress and Info Panel */}
                 <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 via-black/40 to-transparent flex flex-col gap-2 pointer-events-auto">
-                  <div className="flex justify-between text-white text-sm font-medium tracking-wide drop-shadow-lg">
+                  {/* <div className="flex justify-between text-white text-sm font-medium tracking-wide drop-shadow-lg">
                     <span>{activeVideo.title || 'Project Showcase'}</span>
-                  </div>
+                  </div> */}
 
                   {/* Custom Progress Bar Click to Seek Handler */}
                   <div
