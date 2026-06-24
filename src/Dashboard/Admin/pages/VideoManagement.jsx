@@ -8,11 +8,30 @@ const STATUS_COLORS = {
   approved: 'text-green-400 bg-green-500/10 border-green-500/20',
   rejected: 'text-red-400 bg-red-500/10 border-red-500/20',
 };
+
+// Generates a consistent, attractive dark gradient background based on the video title string
+const getDynamicGradient = (string) => {
+  const gradients = [
+    'from-red-950/40 via-neutral-900 to-black',
+    'from-orange-950/40 via-neutral-900 to-black',
+    'from-amber-950/40 via-neutral-900 to-black',
+    'from-neutral-800/40 via-neutral-900 to-black',
+    'from-rose-950/40 via-neutral-900 to-black'
+  ];
+  if (!string) return gradients[0];
+  let hash = 0;
+  for (let i = 0; i < string.length; i++) {
+    hash = string.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const index = Math.abs(hash) % gradients.length;
+  return gradients[index];
+};
+
 export default function VideoManagement() {
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  
+
   // Category states for filtering
   const [categories, setCategories] = useState([]);
   const [selectedMainCat, setSelectedMainCat] = useState('');
@@ -42,19 +61,21 @@ export default function VideoManagement() {
     try {
       const params = {};
       if (search) params.search = search;
-      // Note: Assuming backend supports filtering by category/subcategory. If not, filtering can be done client-side below.
       const res = await api.get('/videos', { params });
       setVideos(res.data.data || []);
-    } catch { toast.error('Failed to fetch videos'); }
-    finally { setLoading(false); }
+    } catch {
+      toast.error('Failed to fetch videos');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  useEffect(() => { 
-    fetchCategories(); 
+  useEffect(() => {
+    fetchCategories();
   }, []);
 
-  useEffect(() => { 
-    fetchVideos(); 
+  useEffect(() => {
+    fetchVideos();
   }, [search]);
 
   const handleApprove = async (id, e) => {
@@ -63,7 +84,9 @@ export default function VideoManagement() {
       await api.put(`/videos/${id}/approve`, { status: 'approved' });
       toast.success('Video approved!');
       fetchVideos();
-    } catch { toast.error('Failed to approve'); }
+    } catch {
+      toast.error('Failed to approve');
+    }
   };
 
   const handleReject = async () => {
@@ -73,7 +96,9 @@ export default function VideoManagement() {
       setRejectModal(null);
       setRejectReason('');
       fetchVideos();
-    } catch { toast.error('Failed to reject'); }
+    } catch {
+      toast.error('Failed to reject');
+    }
   };
 
   const handleDelete = async () => {
@@ -82,8 +107,11 @@ export default function VideoManagement() {
       await api.delete(`/videos/${deleteModal}`);
       toast.success('Video deleted');
       fetchVideos();
-    } catch { toast.error('Failed to delete'); }
-    finally { setDeleteModal(null); }
+    } catch {
+      toast.error('Failed to delete');
+    } finally {
+      setDeleteModal(null);
+    }
   };
 
   const toggleSelection = (id) => {
@@ -124,7 +152,6 @@ export default function VideoManagement() {
     }
   };
 
-  // Client-side filtering for categories since backend might not support it natively yet
   const filteredVideos = videos.filter(video => {
     let match = true;
     if (selectedMainCat) {
@@ -147,7 +174,7 @@ export default function VideoManagement() {
           <h1 className="text-2xl font-bold text-white">Video Management</h1>
           <p className="text-gray-500 text-sm mt-1">Approve, reject or delete uploaded videos</p>
         </div>
-        
+
         <div className="flex flex-col sm:flex-row items-center gap-3 w-full xl:w-auto">
           {/* Search */}
           <div className="relative w-full sm:w-auto">
@@ -160,7 +187,7 @@ export default function VideoManagement() {
               className="w-full sm:w-64 bg-[#111] border border-white/10 rounded-xl pl-9 pr-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-red-500 transition-all"
             />
           </div>
-          
+
           {/* Main Category Dropdown */}
           <select
             value={selectedMainCat}
@@ -191,13 +218,12 @@ export default function VideoManagement() {
       {/* Action Bar */}
       <div className="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4">
         <div className="flex items-center gap-3 w-full sm:w-auto">
-          <button 
+          <button
             onClick={selectAll}
-            className={`px-6 py-2.5 text-white text-sm font-medium rounded-xl transition-all ${
-              selectedVideos.length === filteredVideos.length && filteredVideos.length > 0
-                ? 'bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 shadow-lg shadow-red-500/20 border border-transparent'
-                : 'bg-[#111] border border-white/10 hover:border-white/20'
-            }`}
+            className={`px-6 py-2.5 text-white text-sm font-medium rounded-xl transition-all ${selectedVideos.length === filteredVideos.length && filteredVideos.length > 0
+              ? 'bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 shadow-lg shadow-red-500/20 border border-transparent'
+              : 'bg-[#111] border border-white/10 hover:border-white/20'
+              }`}
           >
             {selectedVideos.length === filteredVideos.length && filteredVideos.length > 0 ? 'Deselect All' : 'Select All'}
           </button>
@@ -220,7 +246,7 @@ export default function VideoManagement() {
             <option value="14">14 Days</option>
             <option value="30">30 Days</option>
           </select>
-          <button 
+          <button
             onClick={generateAndCopyLink}
             disabled={creatingLink}
             className="flex items-center justify-center gap-2 px-6 py-2.5 bg-[#111] border border-white/10 hover:border-white/20 text-white text-sm font-medium rounded-xl transition-all w-full sm:w-auto disabled:opacity-50"
@@ -229,8 +255,6 @@ export default function VideoManagement() {
           </button>
         </div>
       </div>
-
-
 
       {loading ? (
         <div className="flex justify-center py-20">
@@ -242,48 +266,70 @@ export default function VideoManagement() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredVideos.map(video => {
             const isSelected = selectedVideos.includes(video._id);
+            const initialLetter = video.title ? video.title.charAt(0).toUpperCase() : 'V';
+            const dynamicGradient = getDynamicGradient(video.title);
+
             return (
-              <div 
-                key={video._id} 
+              <div
+                key={video._id}
                 onClick={() => toggleSelection(video._id)}
-                className={`group relative aspect-[3/4] bg-[#111] rounded-2xl overflow-hidden cursor-pointer transition-all ${
-                  isSelected ? 'border-2 border-red-600 shadow-lg shadow-red-500/20' : 'border border-transparent hover:border-white/10'
-                }`}
+                className={`group relative aspect-[3/4] bg-[#111] rounded-2xl overflow-hidden cursor-pointer transition-all ${isSelected ? 'border-2 border-red-600 shadow-lg shadow-red-500/20' : 'border border-transparent hover:border-white/10'
+                  }`}
               >
-                {/* Thumbnail */}
+                {/* Clean, Premium & Light-weight Custom Showcase Card */}
                 {video.thumbnail_url ? (
-                  <img src={video.thumbnail_url} alt={video.title} className="w-full h-full object-cover" />
+                  <img
+                    src={video.thumbnail_url}
+                    alt={video.title}
+                    loading="lazy"
+                    className="w-full h-full object-cover"
+                  />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-[#1a1a1a] text-gray-600 text-xs text-center p-4">
-                    {video.title}
+                  <div className={`w-full h-full bg-gradient-to-b ${dynamicGradient} flex flex-col items-center justify-center p-6 text-center select-none`}>
+                    {/* Big Stylized Letter Badge */}
+                    <div className="w-16 h-16 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center mb-4 shadow-2xl group-hover:scale-105 group-hover:border-red-500/30 transition-all duration-300">
+                      <span className="text-2xl font-bold bg-gradient-to-b from-white to-gray-500 bg-clip-text text-transparent">
+                        {initialLetter}
+                      </span>
+                    </div>
+
+                    {/* Category Pill */}
+                    <span className="text-[9px] uppercase tracking-widest text-red-500 font-bold px-2 py-0.5 bg-red-500/10 border border-red-500/20 rounded-md mb-2">
+                      {video.category || 'Portfolio'}
+                    </span>
+
+                    {/* Clean Truncated Video Title */}
+                    <p className="text-xs font-medium text-gray-400 max-w-[85%] line-clamp-2 leading-relaxed">
+                      {video.title}
+                    </p>
                   </div>
                 )}
-                
-                {/* Gradient Overlay for better visibility */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+
+                {/* Dark Gradient Overlay over the preview for standard UI look */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10"></div>
 
                 {/* Selection Checkmark */}
                 {isSelected && (
-                  <div className="absolute top-4 right-4 z-10 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center shadow-lg border-2 border-[#111]">
+                  <div className="absolute top-4 right-4 z-25 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center shadow-lg border-2 border-[#111]">
                     <FiCheck className="w-5 h-5 text-white stroke-[3]" />
                   </div>
                 )}
 
                 {/* Play Button Icon */}
-                <div 
-                  className="absolute inset-0 flex items-center justify-center z-10"
+                <div
+                  className="absolute inset-0 flex items-center justify-center z-20"
                   onClick={(e) => {
                     e.stopPropagation();
                     setPreviewVideo(video.drive_file_id);
                   }}
                 >
-                  <div className="w-14 h-14 bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-red-600 hover:scale-110 transition-all text-white shadow-xl">
+                  <div className="w-14 h-14 bg-black/60 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-red-600 hover:scale-110 transition-all text-white shadow-xl">
                     <FiPlay className="w-5 h-5 ml-1" fill="currentColor" />
                   </div>
                 </div>
 
                 {/* Info Overlay at the bottom */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
+                <div className="absolute bottom-0 left-0 right-0 p-4 z-20">
                   <h3 className="text-white font-medium text-sm truncate drop-shadow-md">{video.title}</h3>
                   <div className="flex items-center justify-between mt-1">
                     <span className="text-gray-300 text-xs drop-shadow-md truncate max-w-[60%]">
@@ -296,7 +342,7 @@ export default function VideoManagement() {
                 </div>
 
                 {/* Hover Actions (Approve, Reject, Delete) */}
-                <div className="absolute top-4 left-4 z-20 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="absolute top-4 left-4 z-30 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                   {video.status === 'pending' && (
                     <>
                       <button
