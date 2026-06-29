@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import api from '../../../services/api';
+import api from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 import toast, { Toaster } from 'react-hot-toast';
-import { FiCheck, FiX, FiTrash2, FiSearch, FiEye, FiPlay, FiCopy, FiCheckCircle } from 'react-icons/fi';
+import { FiCheck, FiX, FiTrash2, FiSearch, FiEye, FiPlay, FiCopy, FiCheckCircle, FiEdit } from 'react-icons/fi';
 
 const STATUS_COLORS = {
   pending: 'text-amber-500 bg-amber-50 border-amber-200',
@@ -28,6 +29,7 @@ const getDynamicGradient = (string) => {
 };
 
 export default function VideoManagement() {
+  const { user } = useAuth();
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -46,6 +48,11 @@ export default function VideoManagement() {
   const [rejectReason, setRejectReason] = useState('');
   const [previewVideo, setPreviewVideo] = useState(null);
   const [deleteModal, setDeleteModal] = useState(null);
+
+  // Edit Modal State
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editForm, setEditForm] = useState({ id: '', title: '', description: '', category: '', subcategory: '', tags: '' });
+  const [updating, setUpdating] = useState(false);
 
   const fetchCategories = async () => {
     try {
@@ -163,6 +170,43 @@ export default function VideoManagement() {
   });
 
   const selectedMainCatData = categories.find(c => c._id === selectedMainCat);
+  const selectedEditCat = categories.find(c => c.name === editForm.category);
+
+  const handleEditClick = (video, e) => {
+    e.stopPropagation();
+    setEditForm({
+      id: video._id,
+      title: video.title || '',
+      description: video.description || '',
+      category: video.category || '',
+      subcategory: video.subcategory || '',
+      tags: (video.tags || []).join(', ')
+    });
+    setEditModalOpen(true);
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    if (!editForm.title || !editForm.category || !editForm.subcategory) return toast.error('Please fill all required fields');
+
+    setUpdating(true);
+    try {
+      await api.put(`/videos/${editForm.id}`, {
+        title: editForm.title,
+        description: editForm.description,
+        category: editForm.category,
+        subcategory: editForm.subcategory,
+        tags: editForm.tags
+      });
+      toast.success('Video updated successfully!');
+      setEditModalOpen(false);
+      fetchVideos();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Update failed');
+    } finally {
+      setUpdating(false);
+    }
+  };
 
   return (
     <div className="pb-10 font-sans text-[#002546]">
@@ -286,10 +330,10 @@ export default function VideoManagement() {
                   />
                 ) : (
                   <div className={`w-full h-[65%] bg-gradient-to-br ${dynamicGradient} flex flex-col items-center justify-center p-6 text-center select-none border-b border-slate-100 relative overflow-hidden`}>
-                     {/* Decorative subtle patterns */}
+                    {/* Decorative subtle patterns */}
                     <div className="absolute top-0 right-0 w-32 h-32 bg-white/40 rounded-full blur-2xl -mr-10 -mt-10"></div>
                     <div className="absolute bottom-0 left-0 w-32 h-32 bg-indigo-100/50 rounded-full blur-2xl -ml-10 -mb-10"></div>
-                    
+
                     {/* Big Stylized Letter Badge */}
                     <div className="relative z-10 w-16 h-16 rounded-2xl bg-white border border-slate-200 flex items-center justify-center mb-4 shadow-sm group-hover:scale-110 transition-all duration-300">
                       <span className="text-3xl font-extrabold text-[#002546]">
@@ -331,15 +375,33 @@ export default function VideoManagement() {
                     <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border capitalize shadow-sm ${STATUS_COLORS[video.status]}`}>
                       {video.status}
                     </span>
-                    
-                    {/* Hover Actions inside the white card (Approve, Reject, Delete) */}
+
+                    {/* Hover Actions inside the white card (Approve, Reject, Delete, Edit, View) */}
                     <div className="flex gap-2">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setPreviewVideo(video.drive_file_id); }}
+                        title="Preview"
+                        className=" cursor-pointer w-7 h-7 rounded-full bg-[#F4F7FE] text-[#002546] border border-slate-100 flex items-center justify-center hover:bg-slate-200 transition-all shadow-sm"
+                      >
+                        <FiEye className="w-3.5 h-3.5" />
+                      </button>
+
+                      {['admin', 'project manager'].includes(user?.role) && (
+                        <button
+                          onClick={(e) => handleEditClick(video, e)}
+                          title="Edit"
+                          className=" cursor-pointer w-7 h-7 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center hover:bg-indigo-500 hover:text-white transition-all shadow-sm"
+                        >
+                          <FiEdit className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+
                       {video.status === 'pending' && (
                         <>
                           <button
                             onClick={(e) => handleApprove(video._id, e)}
                             title="Approve"
-                            className="w-7 h-7 rounded-full bg-emerald-50 text-emerald-500 border border-emerald-100 flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-all shadow-sm"
+                            className=" cursor-pointer w-7 h-7 rounded-full bg-emerald-50 text-emerald-500 border border-emerald-100 flex items-center justify-center hover:bg-emerald-500 hover:text-white transition-all shadow-sm"
                           >
                             <FiCheck className="w-4 h-4" />
                           </button>
@@ -352,13 +414,15 @@ export default function VideoManagement() {
                           </button>
                         </>
                       )}
-                      <button
-                        onClick={(e) => { e.stopPropagation(); setDeleteModal(video._id); }}
-                        title="Delete"
-                        className="w-7 h-7 rounded-full bg-red-50 text-red-500 border border-red-100 flex items-center justify-center hover:bg-red-500 hover:text-white transition-all shadow-sm"
-                      >
-                        <FiTrash2 className="w-3.5 h-3.5" />
-                      </button>
+                      {['admin', 'project manager'].includes(user?.role) && (
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setDeleteModal(video._id); }}
+                          title="Delete"
+                          className="w-7 h-7 rounded-full bg-red-50 text-red-500 border border-red-100 flex items-center justify-center hover:bg-red-500 hover:text-white transition-all shadow-sm"
+                        >
+                          <FiTrash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -420,6 +484,67 @@ export default function VideoManagement() {
               >
                 Reject
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Modal */}
+      {editModalOpen && (
+        <div className="fixed inset-0 bg-[#002546]/40 backdrop-blur-sm flex items-center justify-center z-50 px-4 py-8 overflow-y-auto">
+          <div className="bg-white border border-slate-100 rounded-[24px] w-full max-w-2xl shadow-2xl my-auto">
+            <div className="flex justify-between items-center p-8 border-b border-[#F4F7FE]">
+              <h3 className="text-[#002546] font-extrabold text-2xl">Edit Video</h3>
+              <button onClick={() => !updating && setEditModalOpen(false)}
+                className={`w-10 h-10 rounded-full bg-[#F4F7FE] flex items-center justify-center text-[#A3AED0] hover:text-red-500 transition-colors ${updating ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} disabled={updating}>
+                <FiX className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-8">
+              <form onSubmit={handleUpdate} className="space-y-6">
+                <div>
+                  <label className="block text-xs text-[#A3AED0] font-bold mb-2 uppercase tracking-wider">Page Name <span className="text-red-500">*</span></label>
+                  <input value={editForm.title} onChange={e => setEditForm(p => ({ ...p, title: e.target.value }))} placeholder="e.g. Organic Honey Product Ad" disabled={updating}
+                    className="w-full bg-[#F4F7FE] border border-slate-200 rounded-[12px] px-5 py-3 text-sm text-[#002546] font-medium placeholder-[#A3AED0] focus:outline-none focus:ring-2 focus:ring-[#002546]/20 focus:border-[#002546] transition-all disabled:opacity-50" />
+                </div>
+                <div>
+                  <label className="block text-xs text-[#A3AED0] font-bold mb-2 uppercase tracking-wider">Description</label>
+                  <textarea value={editForm.description} onChange={e => setEditForm(p => ({ ...p, description: e.target.value }))} placeholder="Brief description of the video..." rows={3} disabled={updating}
+                    className="w-full bg-[#F4F7FE] border border-slate-200 rounded-[12px] px-5 py-3 text-sm text-[#002546] font-medium placeholder-[#A3AED0] focus:outline-none focus:ring-2 focus:ring-[#002546]/20 focus:border-[#002546] transition-all resize-none disabled:opacity-50" />
+                </div>
+                <div className="grid grid-cols-2 gap-5">
+                  <div>
+                    <label className="block text-xs text-[#A3AED0] font-bold mb-2 uppercase tracking-wider">Category <span className="text-red-500">*</span></label>
+                    <select value={editForm.category} onChange={e => setEditForm(p => ({ ...p, category: e.target.value, subcategory: '' }))} disabled={updating}
+                      className="w-full bg-[#F4F7FE] border border-slate-200 rounded-[12px] px-5 py-3 text-sm text-[#002546] font-medium focus:outline-none focus:ring-2 focus:ring-[#002546]/20 focus:border-[#002546] transition-all disabled:opacity-50">
+                      <option value="">Select category</option>
+                      {categories.map(c => <option key={c._id} value={c.name}>{c.name}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs text-[#A3AED0] font-bold mb-2 uppercase tracking-wider">Sub Category <span className="text-red-500">*</span></label>
+                    <select value={editForm.subcategory} onChange={e => setEditForm(p => ({ ...p, subcategory: e.target.value }))} disabled={!selectedEditCat || updating}
+                      className="w-full bg-[#F4F7FE] border border-slate-200 rounded-[12px] px-5 py-3 text-sm text-[#002546] font-medium focus:outline-none focus:ring-2 focus:ring-[#002546]/20 focus:border-[#002546] transition-all disabled:opacity-50">
+                      <option value="">Select subcategory</option>
+                      {selectedEditCat?.subcategories?.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs text-[#A3AED0] font-bold mb-2 uppercase tracking-wider">Tags (comma separated)</label>
+                  <input value={editForm.tags} onChange={e => setEditForm(p => ({ ...p, tags: e.target.value }))} placeholder="organic, product, ad, 2024" disabled={updating}
+                    className="w-full bg-[#F4F7FE] border border-slate-200 rounded-[12px] px-5 py-3 text-sm text-[#002546] font-medium placeholder-[#A3AED0] focus:outline-none focus:ring-2 focus:ring-[#002546]/20 focus:border-[#002546] transition-all disabled:opacity-50" />
+                </div>
+                <div className="pt-4 flex gap-4">
+                  <button type="button" onClick={() => setEditModalOpen(false)} disabled={updating}
+                    className="flex-1 py-3.5 border border-slate-200 text-[#002546] hover:bg-[#F4F7FE] font-bold rounded-[12px] transition-all disabled:opacity-50">Cancel</button>
+                  <button type="submit" disabled={updating}
+                    className="flex-[2] py-3.5 bg-gradient-to-r from-[#002546] to-[#00478A] hover:shadow-lg text-white font-bold rounded-[12px] transition-all disabled:opacity-60 shadow-[0px_8px_20px_rgba(0,37,70,0.15)] flex items-center justify-center gap-2">
+                    {updating ? 'Saving...' : 'Save Changes'}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </div>

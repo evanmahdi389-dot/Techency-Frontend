@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import api from '../../../services/api';
+import api from '../../services/api';
 import toast, { Toaster } from 'react-hot-toast';
 import { FiLink2, FiCopy, FiTrash2, FiExternalLink } from 'react-icons/fi';
+import { useAuth } from '../../context/AuthContext';
 
 export default function DemoLinksMonitor() {
   const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const { user } = useAuth();
+
   const fetchLinks = async () => {
     try {
-      const res = await api.get('/demo/all');
+      const endpoint = user?.role === 'admin' ? '/demo/all' : '/demo/my';
+      const res = await api.get(endpoint);
       setLinks(res.data.data || []);
     } catch { toast.error('Failed to fetch demo links'); }
     finally { setLoading(false); }
@@ -36,7 +40,9 @@ export default function DemoLinksMonitor() {
       <Toaster position="top-center" />
       <div className="mb-8">
         <h1 className="text-[26px] font-extrabold tracking-tight">Demo Links Monitor</h1>
-        <p className="text-[#A3AED0] font-bold text-sm mt-1">All generated demo links sent to clients</p>
+        <p className="text-[#A3AED0] font-bold text-sm mt-1">
+          {user?.role === 'admin' ? 'All generated demo links sent to clients' : 'Manage and share the demo links you\'ve created'}
+        </p>
       </div>
 
       {loading ? (

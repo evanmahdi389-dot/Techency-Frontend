@@ -8,7 +8,7 @@ const DEFAULT_FORM = { name: '', email: '', password: '', role: 'editor' };
 
 export default function UserManagement() {
   const [users, setUsers] = useState([]);
-  const [roles, setRoles] = useState(['admin', 'editor', 'sales', 'pm', 'writer']);
+  const [roles, setRoles] = useState(['admin', 'project manager', 'editor', 'sales executive', 'model', 'script writer']);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editUser, setEditUser] = useState(null);
@@ -18,10 +18,11 @@ export default function UserManagement() {
   const getRoleColor = (role) => {
     const colors = {
       admin: 'text-red-600 bg-red-50 border-red-200',
+      'project manager': 'text-indigo-600 bg-indigo-50 border-indigo-200',
       editor: 'text-blue-600 bg-blue-50 border-blue-200',
-      sales: 'text-green-600 bg-green-50 border-green-200',
-      pm: 'text-indigo-600 bg-indigo-50 border-indigo-200',
-      writer: 'text-orange-600 bg-orange-50 border-orange-200',
+      'sales executive': 'text-green-600 bg-green-50 border-green-200',
+      model: 'text-purple-600 bg-purple-50 border-purple-200',
+      'script writer': 'text-orange-600 bg-orange-50 border-orange-200',
     };
     return colors[role?.toLowerCase()] || 'text-gray-600 bg-gray-50 border-gray-200'; // Fallback
   };
@@ -30,7 +31,7 @@ export default function UserManagement() {
     try {
       const [usersRes, settingsRes] = await Promise.all([
         api.get('/users'),
-        api.get('/settings').catch(() => ({ data: { roles: [] } }))
+        api.get('/settings/dynamic').catch(() => ({ data: { roles: [] } }))
       ]);
       setUsers(usersRes.data.data || []);
       if (settingsRes.data?.roles?.length > 0) {

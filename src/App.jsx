@@ -24,11 +24,11 @@ import ProtectedRoute from './components/ProtectedRoute';
 // Dashboards
 import AdminLayout from './Dashboard/Admin/AdminLayout';
 import AdminOverview from './Dashboard/Admin/pages/AdminOverview';
-import VideoManagement from './Dashboard/Admin/pages/VideoManagement';
+import VideoManagement from './components/SharedPages/VideoManagement';
 import CategoryManagement from './Dashboard/Admin/pages/CategoryManagement';
 import UserManagement from './Dashboard/Admin/pages/UserManagement';
-import DemoLinksMonitor from './Dashboard/Admin/pages/DemoLinksMonitor';
-import AdminUpload from './Dashboard/Admin/pages/AdminUpload';
+import DemoLinksMonitor from './components/SharedPages/DemoLinksMonitor';
+import UploadCenter from './components/SharedPages/UploadCenter';
 
 import OrderSourceManagement from './Dashboard/Admin/pages/OrderSourceManagement';
 import ServiceTypeManagement from './Dashboard/Admin/pages/ServiceTypeManagement';
@@ -40,7 +40,7 @@ import EditorDashboard from './Dashboard/RoleViews/EditorDashboard';
 
 import SalesLayout from './Dashboard/SalesExecutive/SalesLayout';
 import BrowseVideos from './Dashboard/SalesExecutive/pages/BrowseVideos';
-import MyDemoLinks from './Dashboard/SalesExecutive/pages/MyDemoLinks';
+
 
 import PMLayout from './Dashboard/ProjectManager/PMLayout';
 import PMDashboard from './Dashboard/RoleViews/PMDashboard';
@@ -65,7 +65,7 @@ export default function App() {
         <Route path="categories" element={<CategoryManagement />} />
         <Route path="users" element={<UserManagement />} />
         <Route path="demo-links" element={<DemoLinksMonitor />} />
-        <Route path="upload" element={<AdminUpload />} />
+        <Route path="upload" element={<UploadCenter />} />
         <Route path="order-sources" element={<OrderSourceManagement />} />
         <Route path="service-types" element={<ServiceTypeManagement />} />
         <Route path="roles" element={<RoleManagement />} />
@@ -79,19 +79,23 @@ export default function App() {
       </Route>
 
       {/* Sales Dashboard */}
-      <Route path="/dashboard/sales" element={<ProtectedRoute allowedRoles={['sales', 'admin']}><SalesLayout /></ProtectedRoute>}>
+      <Route path="/dashboard/sales" element={<ProtectedRoute allowedRoles={['sales executive', 'admin']}><SalesLayout /></ProtectedRoute>}>
         <Route index element={<BrowseVideos />} />
         <Route path="book-order" element={<SalesBookingForm />} />
-        <Route path="demo-links" element={<MyDemoLinks />} />
+        <Route path="demo-links" element={<DemoLinksMonitor />} />
+        <Route path="videos" element={<VideoManagement />} />
       </Route>
 
       {/* Project Manager Dashboard */}
-      <Route path="/dashboard/pm" element={<ProtectedRoute allowedRoles={['pm', 'admin']}><PMLayout /></ProtectedRoute>}>
+      <Route path="/dashboard/pm" element={<ProtectedRoute allowedRoles={['project manager', 'admin']}><PMLayout /></ProtectedRoute>}>
         <Route index element={<PMDashboard />} />
+        <Route path="videos" element={<VideoManagement />} />
+        <Route path="demo-links" element={<DemoLinksMonitor />} />
+        <Route path="upload" element={<UploadCenter />} />
       </Route>
 
       {/* Writer Dashboard */}
-      <Route path="/dashboard/writer" element={<ProtectedRoute allowedRoles={['writer', 'admin']}><WriterLayout /></ProtectedRoute>}>
+      <Route path="/dashboard/writer" element={<ProtectedRoute allowedRoles={['script writer', 'admin']}><WriterLayout /></ProtectedRoute>}>
         <Route index element={<WriterDashboard />} />
       </Route>
 

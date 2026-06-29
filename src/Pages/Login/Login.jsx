@@ -10,9 +10,9 @@ import logo from "../../../public/logo.png"
 const ROLE_REDIRECTS = {
   admin: '/dashboard/admin',
   editor: '/dashboard/editor',
-  sales: '/dashboard/sales',
-  pm: '/dashboard/pm',
-  writer: '/dashboard/writer',
+  'sales executive': '/dashboard/sales',
+  'project manager': '/dashboard/pm',
+  'script writer': '/dashboard/writer',
 };
 
 export default function Login() {

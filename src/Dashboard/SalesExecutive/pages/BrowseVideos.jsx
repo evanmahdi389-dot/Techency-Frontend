@@ -125,20 +125,20 @@ export default function BrowseVideos() {
       {/* Header Row */}
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-white">Browse Videos</h1>
-          <p className="text-gray-500 text-sm mt-1">Select approved videos to generate a client demo link</p>
+          <h1 className="text-[26px] font-extrabold text-[#002546]">Browse Videos</h1>
+          <p className="text-[#A3AED0] text-sm mt-1 font-bold">Select approved videos to generate a client demo link</p>
         </div>
         
         <div className="flex flex-col sm:flex-row items-center gap-3 w-full xl:w-auto">
           {/* Search */}
           <div className="relative w-full sm:w-auto">
-            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
+            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A3AED0] w-4 h-4" />
             <input
               type="text"
               placeholder="Search videos..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full sm:w-64 bg-[#111] border border-white/10 rounded-xl pl-9 pr-4 py-2.5 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-red-500 transition-all"
+              className="w-full sm:w-64 bg-[#F4F7FE] border border-slate-200 rounded-xl pl-9 pr-4 py-2.5 text-sm text-[#002546] placeholder-[#A3AED0] font-bold focus:outline-none focus:border-[#002546] transition-all"
             />
           </div>
           
@@ -146,7 +146,7 @@ export default function BrowseVideos() {
           <select
             value={selectedMainCat}
             onChange={e => { setSelectedMainCat(e.target.value); setSelectedSubCat(''); }}
-            className="w-full sm:w-auto bg-[#111] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-gray-400 focus:outline-none focus:border-red-500 transition-all cursor-pointer"
+            className="w-full sm:w-auto bg-[#F4F7FE] border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-[#002546] font-bold focus:outline-none focus:border-[#002546] transition-all cursor-pointer"
           >
             <option value="">-----Main Category-----</option>
             {categories.map(cat => (
@@ -159,7 +159,7 @@ export default function BrowseVideos() {
             value={selectedSubCat}
             onChange={e => setSelectedSubCat(e.target.value)}
             disabled={!selectedMainCat}
-            className="w-full sm:w-auto bg-[#111] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-gray-400 focus:outline-none focus:border-red-500 transition-all cursor-pointer disabled:opacity-50"
+            className="w-full sm:w-auto bg-[#F4F7FE] border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-[#002546] font-bold focus:outline-none focus:border-[#002546] transition-all cursor-pointer disabled:opacity-50"
           >
             <option value="">-----Sub Category-----</option>
             {selectedMainCatData?.subcategories?.map(sub => (
@@ -174,16 +174,16 @@ export default function BrowseVideos() {
         <div className="flex items-center gap-3 w-full sm:w-auto">
           <button 
             onClick={selectAll}
-            className={`px-6 py-2.5 text-white text-sm font-medium rounded-xl transition-all ${
+            className={`px-6 py-2.5 text-sm font-bold rounded-xl transition-all ${
               selectedVideos.length === filteredVideos.length && filteredVideos.length > 0
-                ? 'bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 shadow-lg shadow-red-500/20 border border-transparent'
-                : 'bg-[#111] border border-white/10 hover:border-white/20'
+                ? 'bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-500 hover:to-orange-400 text-white shadow-lg shadow-red-500/20 border border-transparent'
+                : 'bg-white border border-slate-200 text-[#002546] hover:bg-[#F4F7FE]'
             }`}
           >
             {selectedVideos.length === filteredVideos.length && filteredVideos.length > 0 ? 'Deselect All' : 'Select All'}
           </button>
           {selectedVideos.length > 0 && (
-            <button className="px-6 py-2.5 bg-[#111] border border-white/10 text-white text-sm font-medium rounded-xl">
+            <button className="px-6 py-2.5 bg-indigo-50 border border-indigo-100 text-indigo-600 text-sm font-bold rounded-xl">
               Select {selectedVideos.length} Video{selectedVideos.length > 1 ? 's' : ''}
             </button>
           )}
@@ -193,7 +193,7 @@ export default function BrowseVideos() {
           <select
             value={expiryDays}
             onChange={e => setExpiryDays(e.target.value)}
-            className="bg-[#111] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-gray-400 focus:outline-none focus:border-red-500 transition-all cursor-pointer hidden sm:block"
+            className="bg-[#F4F7FE] border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-[#002546] font-bold focus:outline-none focus:border-[#002546] transition-all cursor-pointer hidden sm:block"
           >
             <option value="1">24 Hours</option>
             <option value="3">3 Days</option>
@@ -204,7 +204,7 @@ export default function BrowseVideos() {
           <button 
             onClick={generateAndCopyLink}
             disabled={creatingLink}
-            className="flex items-center justify-center gap-2 px-6 py-2.5 bg-[#111] border border-white/10 hover:border-white/20 text-white text-sm font-medium rounded-xl transition-all w-full sm:w-auto disabled:opacity-50"
+            className="flex items-center justify-center gap-2 px-6 py-2.5 bg-[#002546] hover:bg-[#013f77] text-white text-sm font-bold rounded-xl transition-all w-full sm:w-auto disabled:opacity-50 border border-transparent shadow-[0_4px_12px_rgba(0,37,70,0.15)]"
           >
             {creatingLink ? 'Creating...' : <><FiCopy className="w-4 h-4" /> Copy Video Link</>}
           </button>
@@ -227,8 +227,8 @@ export default function BrowseVideos() {
               <div 
                 key={video._id} 
                 onClick={() => toggleSelection(video._id)}
-                className={`group relative aspect-[3/4] bg-[#111] rounded-2xl overflow-hidden cursor-pointer transition-all ${
-                  isSelected ? 'border-2 border-red-600 shadow-lg shadow-red-500/20' : 'border border-transparent hover:border-white/10'
+                className={`group relative aspect-[3/4] bg-[#F4F7FE] rounded-2xl overflow-hidden cursor-pointer transition-all ${
+                  isSelected ? 'border-2 border-red-600 shadow-lg shadow-red-500/20' : 'border border-slate-200 shadow-sm hover:border-slate-300'
                 }`}
               >
                 {/* Thumbnail */}
@@ -258,7 +258,7 @@ export default function BrowseVideos() {
                     setPreviewVideo(video.drive_file_id);
                   }}
                 >
-                  <div className="w-14 h-14 bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-red-600 hover:scale-110 transition-all text-white shadow-xl">
+                  <div className="w-14 h-14 bg-white/70 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-red-600 hover:scale-110 transition-all text-[#002546] hover:text-white shadow-xl">
                     <FiPlay className="w-5 h-5 ml-1" fill="currentColor" />
                   </div>
                 </div>
@@ -287,7 +287,7 @@ export default function BrowseVideos() {
           <button
             onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
-            className="px-4 py-2 bg-[#111] border border-white/10 rounded-xl text-sm font-medium text-white disabled:opacity-50 hover:border-white/20 transition-all cursor-pointer"
+            className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold text-[#002546] disabled:opacity-50 hover:bg-[#F4F7FE] transition-all cursor-pointer shadow-sm"
           >
             Previous
           </button>
@@ -297,10 +297,10 @@ export default function BrowseVideos() {
               <button
                 key={i}
                 onClick={() => setCurrentPage(i + 1)}
-                className={`w-8 h-8 flex items-center justify-center rounded-lg text-sm font-medium transition-all cursor-pointer ${
+                className={`w-8 h-8 flex items-center justify-center rounded-lg text-sm font-bold transition-all cursor-pointer ${
                   currentPage === i + 1
-                    ? 'bg-red-600 text-white'
-                    : 'text-gray-400 hover:bg-white/10 hover:text-white'
+                    ? 'bg-red-600 text-white shadow-md shadow-red-500/20'
+                    : 'text-[#A3AED0] hover:bg-white hover:text-[#002546] border border-transparent hover:border-slate-200'
                 }`}
               >
                 {i + 1}
@@ -311,7 +311,7 @@ export default function BrowseVideos() {
           <button
             onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
             disabled={currentPage === totalPages}
-            className="px-4 py-2 bg-[#111] border border-white/10 rounded-xl text-sm font-medium text-white disabled:opacity-50 hover:border-white/20 transition-all cursor-pointer"
+            className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold text-[#002546] disabled:opacity-50 hover:bg-[#F4F7FE] transition-all cursor-pointer shadow-sm"
           >
             Next
           </button>
@@ -320,11 +320,11 @@ export default function BrowseVideos() {
 
       {/* Preview Modal */}
       {previewVideo && (
-        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-[60] px-4">
-          <div className="bg-[#151515] border border-white/10 rounded-2xl p-4 w-full max-w-4xl shadow-2xl flex flex-col h-[80vh]">
+        <div className="fixed inset-0 bg-[#002546]/40 backdrop-blur-sm flex items-center justify-center z-[60] px-4">
+          <div className="bg-white border border-slate-100 rounded-2xl p-4 w-full max-w-4xl shadow-2xl flex flex-col h-[80vh]">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-white font-semibold text-lg">Video Preview</h3>
-              <button onClick={() => setPreviewVideo(null)} className="text-gray-400 hover:text-white transition-colors">
+              <h3 className="text-[#002546] font-extrabold text-lg">Video Preview</h3>
+              <button onClick={() => setPreviewVideo(null)} className="text-[#A3AED0] hover:text-red-500 transition-colors">
                 <FiX className="w-6 h-6" />
               </button>
             </div>

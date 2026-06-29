@@ -49,84 +49,84 @@ const PMDashboard = () => {
     <div className="h-[calc(100vh-100px)] flex flex-col">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-white">PM Pipeline Matrix</h1>
-          <p className="text-gray-500 text-sm mt-1">Drag and oversee orders across the production lifecycle</p>
+          <h1 className="text-[26px] font-extrabold text-[#002546]">PM Pipeline Matrix</h1>
+          <p className="text-[#A3AED0] text-sm mt-1 font-bold">Drag and oversee orders across the production lifecycle</p>
         </div>
       </div>
 
-      <div className="flex gap-6 flex-1 overflow-x-auto pb-6 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+      <div className="flex gap-6 flex-1 overflow-x-auto pb-6 scrollbar-thin scrollbar-thumb-[#002546]/10 scrollbar-track-transparent">
         {columns.map(statusCol => {
           const colTasks = orders.filter(o => o.status === statusCol);
           return (
-            <div key={statusCol} className="flex-none w-[340px] bg-[#111] rounded-2xl flex flex-col border border-white/5 overflow-hidden">
-              <div className="p-4 bg-white/2 border-b border-white/5 sticky top-0 z-10 flex items-center justify-between">
-                <span className="font-semibold text-white text-sm uppercase tracking-wider">{statusCol}</span>
-                <span className="bg-indigo-500/20 text-indigo-400 text-xs px-2 py-0.5 rounded-full font-bold">{colTasks.length}</span>
+            <div key={statusCol} className="flex-none w-[340px] bg-white rounded-2xl flex flex-col border border-[#EAEFF5] shadow-[0px_12px_28px_rgba(0,37,70,0.05)] overflow-hidden">
+              <div className="p-4 bg-[#F4F7FE] border-b border-[#EAEFF5] sticky top-0 z-10 flex items-center justify-between">
+                <span className="font-extrabold text-[#002546] text-sm uppercase tracking-wider">{statusCol}</span>
+                <span className="bg-indigo-100 text-indigo-600 text-xs px-2 py-0.5 rounded-full font-bold">{colTasks.length}</span>
               </div>
 
-              <div className="p-4 flex-1 overflow-y-auto space-y-4 scrollbar-thin scrollbar-thumb-white/5 scrollbar-track-transparent">
+              <div className="p-4 flex-1 overflow-y-auto space-y-4 scrollbar-thin scrollbar-thumb-[#002546]/5 scrollbar-track-transparent">
                 {colTasks.map(order => (
-                  <div key={order._id} className="bg-[#151515] p-5 rounded-xl border border-white/5 hover:border-indigo-500/30 hover:-translate-y-0.5 transition-all shadow-lg flex flex-col gap-3 group">
+                  <div key={order._id} className="bg-white p-5 rounded-xl border border-[#EAEFF5] hover:border-indigo-500/30 hover:-translate-y-0.5 transition-all shadow-sm flex flex-col gap-3 group">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h3 className="font-bold text-white text-base leading-tight">{order.clientInfo.name}</h3>
-                        <div className="text-[11px] text-gray-500 font-mono mt-1">ID: {order._id}</div>
+                        <h3 className="font-extrabold text-[#002546] text-base leading-tight">{order.clientInfo.name}</h3>
+                        <div className="text-[11px] text-[#A3AED0] font-mono mt-1 font-bold">ID: {order._id}</div>
                       </div>
                     </div>
 
                     {statusCol === 'Pending PM Review' && (
-                      <div className="space-y-3 pt-2 border-t border-white/5">
-                        <p className="text-xs text-gray-400 font-medium">Product Status: <span className="text-indigo-400">{order.productCourierTracking?.status}</span></p>
-                        <button onClick={() => handleAction(order._id, 'approve-order', { writerId: 'w1' })} className="w-full flex justify-center items-center gap-2 py-2 bg-gradient-to-r from-indigo-600 to-blue-500 hover:from-indigo-500 hover:to-blue-400 text-white rounded-lg text-xs font-semibold transition-all">
+                      <div className="space-y-3 pt-2 border-t border-[#EAEFF5]">
+                        <p className="text-xs text-[#A3AED0] font-bold">Product Status: <span className="text-indigo-600">{order.productCourierTracking?.status}</span></p>
+                        <button onClick={() => handleAction(order._id, 'approve-order', { writerId: 'w1' })} className="w-full flex justify-center items-center gap-2 py-2 bg-gradient-to-r from-indigo-600 to-blue-500 hover:from-indigo-500 hover:to-blue-400 text-white rounded-lg text-xs font-bold transition-all shadow-md shadow-indigo-500/20">
                           Assign Writer <FiArrowRight className="w-3 h-3" />
                         </button>
                       </div>
                     )}
 
                     {statusCol === 'Script Submitted' && (
-                      <div className="space-y-3 pt-2 border-t border-white/5">
-                        <button onClick={() => handleAction(order._id, 'approve-script', {})} className="w-full flex justify-center items-center gap-2 py-2 bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-500 hover:to-emerald-400 text-white rounded-lg text-xs font-semibold transition-all">
+                      <div className="space-y-3 pt-2 border-t border-[#EAEFF5]">
+                        <button onClick={() => handleAction(order._id, 'approve-script', {})} className="w-full flex justify-center items-center gap-2 py-2 bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-500 hover:to-emerald-400 text-white rounded-lg text-xs font-bold transition-all shadow-md shadow-green-500/20">
                           <FiCheckCircle className="w-3.5 h-3.5" /> Approve Script
                         </button>
                       </div>
                     )}
 
                     {statusCol === 'Ready for Shoot' && (
-                      <div className="space-y-3 pt-2 border-t border-white/5">
-                        <div className="flex justify-between text-xs text-gray-400 bg-black/40 p-2 rounded-lg border border-white/5">
-                          <span className="text-center w-1/3 border-r border-white/5">Total<br /><span className="text-white font-bold text-sm">{order.productionStates.shootTracking.totalVideos}</span></span>
-                          <span className="text-center w-1/3 border-r border-white/5">Done<br /><span className="text-green-400 font-bold text-sm">{order.productionStates.shootTracking.shotCompleted}</span></span>
-                          <span className="text-center w-1/3">Left<br /><span className="text-orange-400 font-bold text-sm">{order.productionStates.shootTracking.remaining}</span></span>
+                      <div className="space-y-3 pt-2 border-t border-[#EAEFF5]">
+                        <div className="flex justify-between text-xs text-[#002546] bg-[#F4F7FE] p-2 rounded-lg border border-[#EAEFF5]">
+                          <span className="text-center w-1/3 border-r border-[#EAEFF5]">Total<br /><span className="text-[#002546] font-bold text-sm">{order.productionStates.shootTracking.totalVideos}</span></span>
+                          <span className="text-center w-1/3 border-r border-[#EAEFF5]">Done<br /><span className="text-green-600 font-bold text-sm">{order.productionStates.shootTracking.shotCompleted}</span></span>
+                          <span className="text-center w-1/3">Left<br /><span className="text-orange-500 font-bold text-sm">{order.productionStates.shootTracking.remaining}</span></span>
                         </div>
                         <div className="relative">
-                          <FiUser className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-3.5 h-3.5" />
-                          <select className="w-full text-xs pl-9 pr-3 py-2 bg-black border border-white/10 rounded-lg outline-none text-white focus:border-indigo-500 transition-all appearance-none" value={selectedEditor} onChange={e => setSelectedEditor(e.target.value)}>
+                          <FiUser className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A3AED0] w-3.5 h-3.5" />
+                          <select className="w-full text-xs pl-9 pr-3 py-2 bg-[#F4F7FE] border border-slate-200 rounded-lg outline-none text-[#002546] focus:border-[#002546] transition-all appearance-none font-bold" value={selectedEditor} onChange={e => setSelectedEditor(e.target.value)}>
                             <option value="">Assign Editor...</option>
                             {editors.map(e => <option key={e._id} value={e._id}>{e.name}</option>)}
                           </select>
                         </div>
-                        <button onClick={() => handleAction(order._id, 'update-shoot', { shotCompleted: order.productionStates.shootTracking.shotCompleted + 1, remaining: Math.max(0, order.productionStates.shootTracking.remaining - 1), editorId: selectedEditor })} className="w-full flex justify-center items-center gap-2 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg text-xs font-semibold transition-all border border-white/10">
+                        <button onClick={() => handleAction(order._id, 'update-shoot', { shotCompleted: order.productionStates.shootTracking.shotCompleted + 1, remaining: Math.max(0, order.productionStates.shootTracking.remaining - 1), editorId: selectedEditor })} className="w-full flex justify-center items-center gap-2 py-2 bg-gradient-to-r from-[#002546] to-[#00478A] hover:shadow-lg text-white rounded-lg text-xs font-bold transition-all border border-transparent">
                           <FiVideo className="w-3.5 h-3.5" /> Log 1 Shoot Completed
                         </button>
                       </div>
                     )}
 
                     {statusCol === 'Review Pending' && (
-                      <div className="space-y-3 pt-2 border-t border-white/5">
+                      <div className="space-y-3 pt-2 border-t border-[#EAEFF5]">
                         <div className="relative">
-                          <FiMessageSquare className="absolute left-3 top-2.5 text-gray-500 w-3.5 h-3.5" />
-                          <textarea placeholder="Type correction notes here..." className="w-full text-xs pl-9 pr-3 py-2.5 bg-black border border-white/10 rounded-lg outline-none text-white focus:border-indigo-500 transition-all resize-none placeholder-gray-600 h-20" value={correctionText} onChange={e => setCorrectionText(e.target.value)}></textarea>
+                          <FiMessageSquare className="absolute left-3 top-2.5 text-[#A3AED0] w-3.5 h-3.5" />
+                          <textarea placeholder="Type correction notes here..." className="w-full text-xs pl-9 pr-3 py-2.5 bg-[#F4F7FE] border border-slate-200 rounded-lg outline-none text-[#002546] focus:border-[#002546] transition-all resize-none placeholder-[#A3AED0] h-20 font-bold" value={correctionText} onChange={e => setCorrectionText(e.target.value)}></textarea>
                         </div>
                         <div className="flex gap-2">
-                          <button onClick={() => handleAction(order._id, 'process-review', { action: 'reject', correctionNote: correctionText })} className="flex-1 py-2 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 rounded-lg text-xs font-semibold transition-all">Reject</button>
-                          <button onClick={() => handleAction(order._id, 'process-review', { action: 'approve' })} className="flex-1 py-2 bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-500 hover:to-emerald-400 text-white rounded-lg text-xs font-semibold transition-all">Approve</button>
+                          <button onClick={() => handleAction(order._id, 'process-review', { action: 'reject', correctionNote: correctionText })} className="flex-1 py-2 bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 rounded-lg text-xs font-bold transition-all">Reject</button>
+                          <button onClick={() => handleAction(order._id, 'process-review', { action: 'approve' })} className="flex-1 py-2 bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-500 hover:to-emerald-400 text-white rounded-lg text-xs font-bold transition-all shadow-md shadow-green-500/20">Approve</button>
                         </div>
                       </div>
                     )}
                   </div>
                 ))}
                 {colTasks.length === 0 && (
-                  <div className="text-center text-xs text-gray-600 py-8 bg-black/20 rounded-xl border border-white/5 border-dashed">
+                  <div className="text-center text-xs text-[#A3AED0] py-8 bg-[#F4F7FE] rounded-xl border border-[#EAEFF5] border-dashed font-bold">
                     No tasks in this column
                   </div>
                 )}

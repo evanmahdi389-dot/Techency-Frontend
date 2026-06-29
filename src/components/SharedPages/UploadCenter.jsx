@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import api from '../../../services/api';
+import api from '../../services/api';
 import toast, { Toaster } from 'react-hot-toast';
 import { FiUpload, FiX, FiVideo, FiImage, FiSearch, FiEdit, FiEye, FiTrash2, FiCheck } from 'react-icons/fi';
+import { useAuth } from '../../context/AuthContext';
 
 const STATUS_COLORS = {
   pending: 'text-amber-500 bg-amber-50 border-amber-200',
@@ -9,7 +10,8 @@ const STATUS_COLORS = {
   rejected: 'text-red-500 bg-red-50 border-red-200',
 };
 
-export default function AdminUpload() {
+export default function UploadCenter() {
+  const { user } = useAuth();
   const [categories, setCategories] = useState([]);
   const [form, setForm] = useState({ title: '', description: '', category: '', subcategory: '', tags: '' });
   const [videoFile, setVideoFile] = useState(null);
@@ -21,6 +23,10 @@ export default function AdminUpload() {
   const [thumbnailProgress, setThumbnailProgress] = useState(0);
   const [uploadPhase, setUploadPhase] = useState(''); // 'uploading' | 'saving' | ''
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editForm, setEditForm] = useState({ id: '', title: '', description: '', category: '', subcategory: '', tags: '' });
+  const [previewVideo, setPreviewVideo] = useState(null);
+  const [updating, setUpdating] = useState(false);
 
   // Table states
   const [videos, setVideos] = useState([]);
@@ -34,7 +40,8 @@ export default function AdminUpload() {
     try {
       const params = {};
       if (search) params.search = search;
-      const res = await api.get('/videos', { params });
+      const endpoint = user?.role === 'admin' ? '/videos' : '/videos/my-uploads';
+      const res = await api.get(endpoint, { params });
       setVideos(res.data.data || []);
     } catch { toast.error('Failed to fetch videos'); }
     finally { setLoading(false); }
@@ -47,6 +54,7 @@ export default function AdminUpload() {
   useEffect(() => { fetchVideos(); }, [search]);
 
   const selectedCat = categories.find(c => c.name === form.category);
+  const selectedEditCat = categories.find(c => c.name === editForm.category);
 
   const handleVideoFile = (f) => {
     if (f && f.type.startsWith('video/')) setVideoFile(f);
@@ -139,6 +147,41 @@ export default function AdminUpload() {
     finally { setDeleteModal(null); }
   };
 
+  const handleEditClick = (video) => {
+    setEditForm({
+      id: video._id,
+      title: video.title || '',
+      description: video.description || '',
+      category: video.category || '',
+      subcategory: video.subcategory || '',
+      tags: (video.tags || []).join(', ')
+    });
+    setEditModalOpen(true);
+  };
+
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    if (!editForm.title || !editForm.category || !editForm.subcategory) return toast.error('Please fill all required fields');
+
+    setUpdating(true);
+    try {
+      await api.put(`/videos/${editForm.id}`, {
+        title: editForm.title,
+        description: editForm.description,
+        category: editForm.category,
+        subcategory: editForm.subcategory,
+        tags: editForm.tags
+      });
+      toast.success('Video updated successfully!');
+      setEditModalOpen(false);
+      fetchVideos();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Update failed');
+    } finally {
+      setUpdating(false);
+    }
+  };
+
   const filteredVideos = videos.filter(video => {
     if (statusFilter && video.status !== statusFilter) return false;
     return true;
@@ -216,9 +259,13 @@ export default function AdminUpload() {
                     </td>
                     <td className="py-2 px-6">
                       <div className="flex items-center justify-end gap-3">
-                        <button className="w-9 h-9 rounded-[10px] bg-[#F4F7FE] border border-slate-100 hover:bg-indigo-50 text-indigo-600 flex items-center justify-center transition-all shadow-sm"><FiEdit className="w-4 h-4" /></button>
-                        <button className="w-9 h-9 rounded-[10px] bg-[#F4F7FE] border border-slate-100 hover:bg-slate-100 text-[#002546] flex items-center justify-center transition-all shadow-sm"><FiEye className="w-4 h-4" /></button>
-                        <button onClick={() => setDeleteModal(video._id)} className="w-9 h-9 rounded-[10px] bg-red-50 hover:bg-red-100 border border-red-100 text-red-500 flex items-center justify-center transition-all shadow-sm"><FiTrash2 className="w-4 h-4" /></button>
+                        {['admin', 'project manager'].includes(user?.role) && (
+                          <button onClick={() => handleEditClick(video)} className=" cursor-pointer w-9 h-9 rounded-[10px] bg-[#F4F7FE] border border-slate-100 hover:bg-indigo-50 text-indigo-600 flex items-center justify-center transition-all shadow-sm"><FiEdit className="w-4 h-4" /></button>
+                        )}
+                        <button onClick={() => setPreviewVideo(video.drive_file_id)} className=" cursor-pointer w-9 h-9 rounded-[10px] bg-[#F4F7FE] border border-slate-100 hover:bg-slate-100 text-[#002546] flex items-center justify-center transition-all shadow-sm"><FiEye className="w-4 h-4" /></button>
+                        {['admin', 'project manager'].includes(user?.role) && (
+                          <button onClick={() => setDeleteModal(video._id)} className=" cursor-pointer w-9 h-9 rounded-[10px] bg-red-50 hover:bg-red-100 border border-red-100 text-red-500 flex items-center justify-center transition-all shadow-sm"><FiTrash2 className="w-4 h-4" /></button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -419,6 +466,88 @@ export default function AdminUpload() {
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Modal */}
+      {editModalOpen && (
+        <div className="fixed inset-0 bg-[#002546]/40 backdrop-blur-sm flex items-center justify-center z-50 px-4 py-8 overflow-y-auto">
+          <div className="bg-white border border-slate-100 rounded-[24px] w-full max-w-2xl shadow-2xl my-auto">
+            <div className="flex justify-between items-center p-8 border-b border-[#F4F7FE]">
+              <h3 className="text-[#002546] font-extrabold text-2xl">Edit Video</h3>
+              <button onClick={() => !updating && setEditModalOpen(false)}
+                className={`w-10 h-10 rounded-full bg-[#F4F7FE] flex items-center justify-center text-[#A3AED0] hover:text-red-500 transition-colors ${updating ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`} disabled={updating}>
+                <FiX className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-8">
+              <form onSubmit={handleUpdate} className="space-y-6">
+                <div>
+                  <label className="block text-xs text-[#A3AED0] font-bold mb-2 uppercase tracking-wider">Page Name <span className="text-red-500">*</span></label>
+                  <input value={editForm.title} onChange={e => setEditForm(p => ({ ...p, title: e.target.value }))} placeholder="e.g. Organic Honey Product Ad" disabled={updating}
+                    className="w-full bg-[#F4F7FE] border border-slate-200 rounded-[12px] px-5 py-3 text-sm text-[#002546] font-medium placeholder-[#A3AED0] focus:outline-none focus:ring-2 focus:ring-[#002546]/20 focus:border-[#002546] transition-all disabled:opacity-50" />
+                </div>
+                <div>
+                  <label className="block text-xs text-[#A3AED0] font-bold mb-2 uppercase tracking-wider">Description</label>
+                  <textarea value={editForm.description} onChange={e => setEditForm(p => ({ ...p, description: e.target.value }))} placeholder="Brief description of the video..." rows={3} disabled={updating}
+                    className="w-full bg-[#F4F7FE] border border-slate-200 rounded-[12px] px-5 py-3 text-sm text-[#002546] font-medium placeholder-[#A3AED0] focus:outline-none focus:ring-2 focus:ring-[#002546]/20 focus:border-[#002546] transition-all resize-none disabled:opacity-50" />
+                </div>
+                <div className="grid grid-cols-2 gap-5">
+                  <div>
+                    <label className="block text-xs text-[#A3AED0] font-bold mb-2 uppercase tracking-wider">Category <span className="text-red-500">*</span></label>
+                    <select value={editForm.category} onChange={e => setEditForm(p => ({ ...p, category: e.target.value, subcategory: '' }))} disabled={updating}
+                      className="w-full bg-[#F4F7FE] border border-slate-200 rounded-[12px] px-5 py-3 text-sm text-[#002546] font-medium focus:outline-none focus:ring-2 focus:ring-[#002546]/20 focus:border-[#002546] transition-all disabled:opacity-50">
+                      <option value="">Select category</option>
+                      {categories.map(c => <option key={c._id} value={c.name}>{c.name}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs text-[#A3AED0] font-bold mb-2 uppercase tracking-wider">Sub Category <span className="text-red-500">*</span></label>
+                    <select value={editForm.subcategory} onChange={e => setEditForm(p => ({ ...p, subcategory: e.target.value }))} disabled={!selectedEditCat || updating}
+                      className="w-full bg-[#F4F7FE] border border-slate-200 rounded-[12px] px-5 py-3 text-sm text-[#002546] font-medium focus:outline-none focus:ring-2 focus:ring-[#002546]/20 focus:border-[#002546] transition-all disabled:opacity-50">
+                      <option value="">Select subcategory</option>
+                      {selectedEditCat?.subcategories?.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs text-[#A3AED0] font-bold mb-2 uppercase tracking-wider">Tags (comma separated)</label>
+                  <input value={editForm.tags} onChange={e => setEditForm(p => ({ ...p, tags: e.target.value }))} placeholder="organic, product, ad, 2024" disabled={updating}
+                    className="w-full bg-[#F4F7FE] border border-slate-200 rounded-[12px] px-5 py-3 text-sm text-[#002546] font-medium placeholder-[#A3AED0] focus:outline-none focus:ring-2 focus:ring-[#002546]/20 focus:border-[#002546] transition-all disabled:opacity-50" />
+                </div>
+                <div className="pt-4 flex gap-4">
+                  <button type="button" onClick={() => setEditModalOpen(false)} disabled={updating}
+                    className="flex-1 py-3.5 border border-slate-200 text-[#002546] hover:bg-[#F4F7FE] font-bold rounded-[12px] transition-all disabled:opacity-50">Cancel</button>
+                  <button type="submit" disabled={updating}
+                    className="flex-[2] py-3.5 bg-gradient-to-r from-[#002546] to-[#00478A] hover:shadow-lg text-white font-bold rounded-[12px] transition-all disabled:opacity-60 shadow-[0px_8px_20px_rgba(0,37,70,0.15)] flex items-center justify-center gap-2">
+                    {updating ? 'Saving...' : 'Save Changes'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Preview Modal */}
+      {previewVideo && (
+        <div className="fixed inset-0 bg-[#002546]/80 backdrop-blur-md flex items-center justify-center z-[60] px-4">
+          <div className="bg-white rounded-[24px] p-2 w-full max-w-4xl shadow-2xl flex flex-col h-[80vh] relative overflow-hidden">
+            <div className="absolute top-4 right-4 z-50">
+              <button onClick={() => setPreviewVideo(null)} className="w-10 h-10 bg-white/20 backdrop-blur-md hover:bg-white/40 text-white rounded-full flex items-center justify-center transition-all">
+                <FiX className="w-6 h-6" />
+              </button>
+            </div>
+            <div className="flex-1 bg-black rounded-[20px] overflow-hidden relative">
+              <iframe
+                src={`https://drive.google.com/file/d/${previewVideo}/preview`}
+                className="absolute inset-0 w-full h-full border-0"
+                allow="autoplay"
+                title="Video Preview"
+              ></iframe>
             </div>
           </div>
         </div>
