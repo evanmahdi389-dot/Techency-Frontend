@@ -444,13 +444,13 @@ export default function VideoManagement() {
             <div className="flex gap-4">
               <button
                 onClick={() => setDeleteModal(null)}
-                className="flex-1 py-3 border border-slate-200 hover:bg-[#F4F7FE] text-[#002546] text-sm font-bold rounded-[12px] transition-all"
+                className=" cursor-pointer flex-1 py-3 border border-slate-200 hover:bg-[#F4F7FE] text-[#002546] text-sm font-bold rounded-[12px] transition-all"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDelete}
-                className="flex-1 py-3 bg-red-600 hover:bg-red-500 text-white text-sm font-bold rounded-[12px] transition-all hover:shadow-lg"
+                className=" cursor-pointer flex-1 py-3 bg-red-600 hover:bg-red-500 text-white text-sm font-bold rounded-[12px] transition-all hover:shadow-lg"
               >
                 Delete
               </button>

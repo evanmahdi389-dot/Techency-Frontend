@@ -284,8 +284,8 @@ export default function UploadCenter() {
             <h3 className="text-[#002546] font-extrabold text-[20px] mb-2">Delete Video?</h3>
             <p className="text-[#A3AED0] font-medium text-sm mb-8">Are you sure you want to delete this video? This action cannot be undone.</p>
             <div className="flex gap-4">
-              <button onClick={() => setDeleteModal(null)} className="flex-1 py-3 border border-slate-200 hover:bg-[#F4F7FE] text-[#002546] text-sm font-bold rounded-[12px] transition-all">Cancel</button>
-              <button onClick={handleDelete} className="flex-1 py-3 bg-red-600 hover:bg-red-500 hover:shadow-lg text-white text-sm font-bold rounded-[12px] transition-all">Delete</button>
+              <button onClick={() => setDeleteModal(null)} className=" cursor-pointer flex-1 py-3 border border-slate-200 hover:bg-[#F4F7FE] text-[#002546] text-sm font-bold rounded-[12px] transition-all">Cancel</button>
+              <button onClick={handleDelete} className=" cursor-pointer flex-1 py-3 bg-red-600 hover:bg-red-500 hover:shadow-lg text-white text-sm font-bold rounded-[12px] transition-all">Delete</button>
             </div>
           </div>
         </div>

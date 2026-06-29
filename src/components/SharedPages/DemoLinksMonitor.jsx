@@ -104,21 +104,21 @@ export default function DemoLinksMonitor() {
                     href={`/demo/${link.linkId}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="w-10 h-10 rounded-[10px] bg-[#F4F7FE] border border-slate-200 hover:bg-slate-100 flex items-center justify-center text-[#002546] transition-all shadow-sm"
+                    className=" cursor-pointer w-10 h-10 rounded-[10px] bg-[#F4F7FE] border border-slate-200 hover:bg-slate-100 flex items-center justify-center text-[#002546] transition-all shadow-sm"
                     title="Open demo"
                   >
                     <FiExternalLink className="w-4 h-4" />
                   </a>
                   <button
                     onClick={() => copyLink(link.linkId)}
-                    className="w-10 h-10 rounded-[10px] bg-[#F4F7FE] border border-slate-200 hover:bg-slate-100 flex items-center justify-center text-[#002546] transition-all shadow-sm"
+                    className=" cursor-pointer w-10 h-10 rounded-[10px] bg-[#F4F7FE] border border-slate-200 hover:bg-slate-100 flex items-center justify-center text-[#002546] transition-all shadow-sm"
                     title="Copy link"
                   >
                     <FiCopy className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => handleDelete(link._id)}
-                    className="w-10 h-10 rounded-[10px] bg-red-50 hover:bg-red-100 border border-red-100 flex items-center justify-center text-red-500 hover:shadow-sm transition-all"
+                    className="cursor-pointer  w-10 h-10 rounded-[10px] bg-red-50 hover:bg-red-100 border border-red-100 flex items-center justify-center text-red-500 hover:shadow-sm transition-all"
                     title="Delete"
                   >
                     <FiTrash2 className="w-4 h-4" />
