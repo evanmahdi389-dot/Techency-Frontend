@@ -1,6 +1,6 @@
 import { FiPlayCircle, FiUser } from "react-icons/fi";
 import { motion } from 'framer-motion';
-import bannerImage from "../../../public/banner1.png";
+const bannerImage = "/banner1.png";
 
 const Banner = () => {
 return (

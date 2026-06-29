@@ -6,6 +6,8 @@ const ROLE_REDIRECTS = {
   admin: '/dashboard/admin',
   editor: '/dashboard/editor',
   sales: '/dashboard/sales',
+  pm: '/dashboard/pm',
+  writer: '/dashboard/writer',
 };
 
 const ProtectedRoute = ({ children, allowedRoles }) => {

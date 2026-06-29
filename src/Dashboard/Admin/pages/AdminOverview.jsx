@@ -1,96 +1,232 @@
-import React, { useEffect, useState } from 'react';
-import { FiVideo, FiClock, FiCheckCircle, FiXCircle, FiUsers, FiLink2 } from 'react-icons/fi';
-import api from '../../../services/api';
+import React, { useState } from 'react';
+import {
+  FiSearch, FiBell, FiChevronDown, FiVideo, FiClock, FiCheckCircle,
+  FiDollarSign, FiUsers, FiActivity, FiArrowUpRight, FiAlertTriangle
+} from 'react-icons/fi';
 
-const StatCard = ({ icon: Icon, label, value, color, bg }) => (
-  <div className={`bg-[#111] border border-white/5 rounded-2xl p-6 flex items-center gap-4 hover:border-white/10 transition-all`}>
-    <div className={`w-12 h-12 rounded-xl ${bg} flex items-center justify-center flex-shrink-0`}>
-      <Icon className={`w-6 h-6 ${color}`} />
-    </div>
-    <div>
-      <p className="text-gray-400 text-xs font-medium uppercase tracking-wider">{label}</p>
-      <p className="text-2xl font-bold text-white mt-0.5">{value ?? '—'}</p>
-    </div>
-  </div>
-);
+// Mock Data
+const SUMMARY_STATS = [
+  { label: 'Total Orders', value: '124', icon: FiVideo, bg: 'bg-[#002546]/10 text-[#002546]' },
+  { label: 'Active Projects', value: '45', icon: FiActivity, bg: 'bg-indigo-50 text-indigo-600' },
+  { label: 'Pending Orders', value: '12', icon: FiClock, bg: 'bg-amber-50 text-amber-500' },
+  { label: 'Delivered', value: '984', icon: FiCheckCircle, bg: 'bg-emerald-50 text-emerald-500' },
+  { label: 'Due Payments', value: '$3.4k', icon: FiAlertTriangle, bg: 'bg-rose-50 text-rose-500' },
+  { label: 'Total Clients', value: '156', icon: FiUsers, bg: 'bg-purple-50 text-purple-500' },
+  { label: 'Team Members', value: '24', icon: FiUsers, bg: 'bg-cyan-50 text-cyan-500' },
+  { label: 'New Inquiries', value: '18', icon: FiBell, bg: 'bg-[#002546]/10 text-[#002546]' },
+];
+
+const ACTIVE_PROJECTS = [
+  { id: 1, client: 'MD Apu', business: 'Growsin market', progress: 65, status: 'Shooting', date: 'Oct 24, 2026', gradient: 'from-[#002546] to-[#00478A]' },
+  { id: 2, client: 'John Doe', business: 'TechFlow Inc.', progress: 30, status: 'Scripting', date: 'Oct 28, 2026', gradient: 'from-amber-400 to-orange-500' },
+  { id: 3, client: 'Jane Smith', business: 'Global Media', progress: 85, status: 'Editing', date: 'Oct 20, 2026', gradient: 'from-purple-500 to-pink-500' },
+  { id: 4, client: 'Stark Ind.', business: 'Acme Corp', progress: 95, status: 'Edit Review', date: 'Oct 18, 2026', gradient: 'from-emerald-400 to-teal-500' },
+];
 
 export default function AdminOverview() {
-  const [videoStats, setVideoStats] = useState(null);
-  const [userStats, setUserStats] = useState([]);
-  const [demoCount, setDemoCount] = useState(0);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const [vRes, uRes, dRes] = await Promise.all([
-          api.get('/videos/stats'),
-          api.get('/users/stats'),
-          api.get('/demo/all'),
-        ]);
-        setVideoStats(vRes.data.data);
-        setUserStats(uRes.data.data);
-        setDemoCount(dRes.data.data?.length || 0);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchStats();
-  }, []);
-
-  const getUserCount = (role) => userStats.find(s => s._id === role)?.count || 0;
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-2 border-red-500 border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
+  const [date] = useState(new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }));
 
   return (
-    <div>
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-white">Dashboard Overview</h1>
-        <p className="text-gray-500 text-sm mt-1">Techency Video Agency — Admin Control Center</p>
-      </div>
+    <div className="min-h-screen bg-[#EAEFF5] font-sans  text-[#002546] p-4">
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-        <StatCard icon={FiVideo} label="Total Videos" value={videoStats?.total} color="text-blue-400" bg="bg-blue-500/10" />
-        <StatCard icon={FiClock} label="Pending Approval" value={videoStats?.pending} color="text-yellow-400" bg="bg-yellow-500/10" />
-        <StatCard icon={FiCheckCircle} label="Approved" value={videoStats?.approved} color="text-green-400" bg="bg-green-500/10" />
-        <StatCard icon={FiXCircle} label="Rejected" value={videoStats?.rejected} color="text-red-400" bg="bg-red-500/10" />
-        <StatCard icon={FiUsers} label="Total Users" value={getUserCount('admin') + getUserCount('editor') + getUserCount('sales')} color="text-purple-400" bg="bg-purple-500/10" />
-        <StatCard icon={FiLink2} label="Demo Links Created" value={demoCount} color="text-orange-400" bg="bg-orange-500/10" />
-      </div>
+      <div className="max-w-7xl mx-auto space-y-8">
 
-      {/* User breakdown */}
-      <div className="bg-[#111] border border-white/5 rounded-2xl p-6">
-        <h2 className="text-white font-semibold mb-5">Team Breakdown</h2>
-        <div className="space-y-3">
-          {[
-            { role: 'admin', label: 'Admins', color: 'bg-red-500' },
-            { role: 'editor', label: 'Editors', color: 'bg-blue-500' },
-            { role: 'sales', label: 'Sales Executives', color: 'bg-green-500' },
-          ].map(({ role, label, color }) => {
-            const count = getUserCount(role);
-            const total = getUserCount('admin') + getUserCount('editor') + getUserCount('sales') || 1;
-            return (
-              <div key={role} className="flex items-center gap-3">
-                <div className="w-24 text-gray-400 text-sm">{label}</div>
-                <div className="flex-1 bg-white/5 rounded-full h-2 overflow-hidden">
-                  <div
-                    className={`h-full rounded-full ${color} transition-all duration-700`}
-                    style={{ width: `${(count / total) * 100}%` }}
-                  />
-                </div>
-                <div className="w-6 text-right text-white text-sm font-medium">{count}</div>
-              </div>
-            );
-          })}
+        {/* TOTAL REVENUE CARD (Brand Color #002546 Gradient Hero) */}
+        <div className="bg-gradient-to-br from-[#002546] to-[#00478A] rounded-[6px] p-8 md:p-10 shadow-[0px_18px_40px_rgba(0,37,70,0.2)] flex flex-col md:flex-row items-center justify-between relative overflow-hidden group">
+          {/* Decorative mesh glows */}
+          <div className="absolute -top-32 -left-32 w-96 h-96 bg-white/10 rounded-full blur-[100px] pointer-events-none"></div>
+          <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-[#FFB547]/20 rounded-full blur-[80px] pointer-events-none group-hover:scale-125 transition-transform duration-1000"></div>
+
+          <div className="relative z-10 w-full md:w-1/2">
+            <h2 className="text-white/80 font-medium uppercase tracking-widest text-sm mb-2 flex items-center gap-2">
+              Total Revenue <span className="px-2 py-0.5 bg-white/20 rounded-md text-xs backdrop-blur-md">Monthly</span>
+            </h2>
+            <div className="flex items-end gap-5">
+              <span className="text-[54px] font-black text-white leading-none tracking-tight">$124,500</span>
+            </div>
+            <div className="mt-4 flex items-center gap-2">
+              <span className="bg-emerald-400/20 text-emerald-300 px-3 py-1.5 rounded-lg text-sm font-bold flex items-center shadow-sm backdrop-blur-md">
+                <FiArrowUpRight className="mr-1 stroke-[3]" /> +15.4%
+              </span>
+              <p className="text-white/70 text-sm font-medium">vs last month</p>
+            </div>
+          </div>
+
+          {/* Stunning SVG Area Chart */}
+          <div className="relative z-10 w-full md:w-1/2 h-[140px] mt-8 md:mt-0 px-4">
+            <svg viewBox="0 0 200 80" className="w-full h-full overflow-visible preserveAspectRatio-none">
+              <defs>
+                <linearGradient id="colorRev" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#fff" stopOpacity={0.6} />
+                  <stop offset="95%" stopColor="#fff" stopOpacity={0} />
+                </linearGradient>
+                <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="3" result="blur" />
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+              </defs>
+              <path d="M0,60 C40,40 60,70 100,20 C140,-30 170,40 200,10 L200,80 L0,80 Z" fill="url(#colorRev)"></path>
+              <path d="M0,60 C40,40 60,70 100,20 C140,-30 170,40 200,10" fill="none" stroke="#fff" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" filter="url(#glow)"></path>
+              {/* Data points */}
+              <circle cx="100" cy="20" r="5" fill="#fff" stroke="#002546" strokeWidth="2" filter="url(#glow)" />
+              <circle cx="200" cy="10" r="5" fill="#fff" stroke="#002546" strokeWidth="2" filter="url(#glow)" />
+            </svg>
+          </div>
         </div>
+
+        {/* 8 KPI CARDS */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+          {SUMMARY_STATS.map((stat, idx) => (
+            <div key={idx} className="bg-white rounded-[6px] p-6 border border-white shadow-[0px_12px_28px_rgba(0,37,70,0.08)] hover:shadow-[0px_18px_40px_rgba(0,37,70,0.12)] hover:-translate-y-1 transition-all duration-300 flex items-center gap-5 group cursor-pointer relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-white to-slate-50/50 pointer-events-none"></div>
+              <div className={`w-14 h-14 rounded-[16px] ${stat.bg} flex items-center justify-center shadow-[0_4px_10px_rgba(0,0,0,0.03)] group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 relative z-10`}>
+                <stat.icon className="w-6 h-6 stroke-[2.5]" />
+              </div>
+              <div className="relative z-10">
+                <p className="text-[#A3AED0] text-sm font-bold">{stat.label}</p>
+                <h3 className="text-2xl font-black text-[#002546] tracking-tight">{stat.value}</h3>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* PRODUCTION PIPELINE */}
+        <div>
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-[22px] font-bold text-[#002546]">Production Pipeline</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            {/* Elegant Bar Chart Box */}
+            <div className="bg-white rounded-[20px] p-7 border border-white shadow-[0px_12px_28px_rgba(0,37,70,0.08)] flex flex-col h-[320px] relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-white to-slate-50/50 pointer-events-none"></div>
+              <div className="flex justify-between items-center mb-6 relative z-10">
+                <h3 className="text-lg font-bold text-[#002546]">Orders By Stage</h3>
+                <span className="text-[#002546] bg-[#002546]/10 px-3 py-1 rounded-lg text-xs font-bold">This Week</span>
+              </div>
+              <div className="flex-1 flex items-end justify-between px-4 relative z-10">
+                {[
+                  { label: 'Script', h: 35, gradient: 'from-[#FFB547] to-[#FF8E2B]', shadow: 'shadow-[0_4px_12px_rgba(255,142,43,0.3)]' },
+                  { label: 'Shoot', h: 65, gradient: 'from-[#002546] to-[#00478A]', shadow: 'shadow-[0_4px_12px_rgba(0,37,70,0.3)]' },
+                  { label: 'Edit', h: 90, gradient: 'from-[#A15BF0] to-[#C991FF]', shadow: 'shadow-[0_4px_12px_rgba(161,91,240,0.3)]' },
+                  { label: 'Done', h: 100, gradient: 'from-[#01B574] to-[#4CE5B1]', shadow: 'shadow-[0_4px_12px_rgba(1,181,116,0.3)]' }
+                ].map((bar, i) => (
+                  <div key={i} className="flex flex-col items-center gap-3 w-12 group cursor-pointer">
+                    <div className="w-full h-[180px] bg-[#F4F7FE] rounded-full relative overflow-hidden flex items-end p-1 border border-white shadow-inner">
+                      <div className={`w-full rounded-full bg-gradient-to-t ${bar.gradient} ${bar.shadow} group-hover:scale-y-105 origin-bottom transition-transform duration-300`} style={{ height: `${bar.h}%` }}></div>
+                    </div>
+                    <span className="text-sm font-bold text-[#A3AED0]">{bar.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Elegant Donut Chart Box */}
+            <div className="bg-white rounded-[20px] p-7 border border-white shadow-[0px_12px_28px_rgba(0,37,70,0.08)] flex flex-col h-[320px] relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-white to-slate-50/50 pointer-events-none"></div>
+              <div className="flex justify-between items-center mb-2 relative z-10">
+                <h3 className="text-lg font-bold text-[#002546]">Project Distribution</h3>
+                <span className="text-[#002546] bg-[#002546]/10 px-3 py-1 rounded-lg text-xs font-bold">All Time</span>
+              </div>
+              <div className="flex-1 w-full relative flex flex-col items-center justify-center pt-2 z-10">
+
+                {/* SVG Donut Chart */}
+                <div className="relative w-[170px] h-[170px]">
+                  <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90 filter drop-shadow-[0_4px_8px_rgba(0,37,70,0.1)]">
+                    <circle cx="50" cy="50" r="35" stroke="#F4F7FE" strokeWidth="12" fill="none" />
+                    {/* 45% Segment - Corporate */}
+                    <circle cx="50" cy="50" r="35" stroke="#002546" strokeWidth="12" fill="none" strokeDasharray="99 220" strokeDashoffset="0" className="hover:stroke-width-14 transition-all duration-300 cursor-pointer" />
+                    {/* 35% Segment - Commercial */}
+                    <circle cx="50" cy="50" r="35" stroke="#4318FF" strokeWidth="12" fill="none" strokeDasharray="77 220" strokeDashoffset="-99" className="hover:stroke-width-14 transition-all duration-300 cursor-pointer" />
+                    {/* 20% Segment - Wedding */}
+                    <circle cx="50" cy="50" r="35" stroke="#FFB547" strokeWidth="12" fill="none" strokeDasharray="44 220" strokeDashoffset="-176" className="hover:stroke-width-14 transition-all duration-300 cursor-pointer" />
+                  </svg>
+
+                  {/* Center Text */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                    <span className="text-3xl font-black text-[#002546]">124</span>
+                    <span className="text-[10px] uppercase font-bold tracking-widest text-[#A3AED0]">Total</span>
+                  </div>
+                </div>
+
+                {/* Legend */}
+                <div className="mt-4 flex items-center justify-center gap-6 w-full">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#002546] shadow-sm"></div>
+                    <span className="text-xs font-bold text-[#A3AED0]">Corporate (45%)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#4318FF] shadow-sm"></div>
+                    <span className="text-xs font-bold text-[#A3AED0]">Ads (35%)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#FFB547] shadow-sm"></div>
+                    <span className="text-xs font-bold text-[#A3AED0]">Events (20%)</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        {/* ACTIVE PROJECT TABLE */}
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-[22px] font-bold text-[#002546]">Active Project</h2>
+          </div>
+          <div className="bg-white rounded-[6px] border border-white shadow-[0px_12px_28px_rgba(0,37,70,0.08)] overflow-hidden relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-white to-slate-50/50 pointer-events-none"></div>
+            <div className="overflow-x-auto relative z-10">
+              <table className="w-full text-left border-collapse min-w-[800px]">
+                <thead>
+                  <tr className=' bg-[#1a3b59]'>
+                    <th className="px-6 py-4 text-xs font-bold text-[#A3AED0] uppercase tracking-wider border-b border-[#F4F7FE]">Client name</th>
+                    <th className="px-6 py-4 text-xs font-bold text-[#A3AED0] uppercase tracking-wider border-b border-[#F4F7FE]">Business Name</th>
+                    <th className="px-6 py-4 text-xs font-bold text-[#A3AED0] uppercase tracking-wider border-b border-[#F4F7FE]">Progress</th>
+                    <th className="px-6 py-4 text-xs font-bold text-[#A3AED0] uppercase tracking-wider border-b border-[#F4F7FE]">Status</th>
+                    <th className="px-6 py-4 text-xs font-bold text-[#A3AED0] uppercase tracking-wider border-b border-[#F4F7FE] text-right">Delivery Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ACTIVE_PROJECTS.map((project, index) => (
+                    <tr key={project.id} className="hover:bg-[#F4F7FE]/50 transition-colors group">
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          {/* <div className="w-10 h-10 rounded-full bg-[#F4F7FE] flex items-center justify-center font-bold text-[#002546] shadow-sm border border-white">
+                            {project.client.charAt(0)}
+                          </div> */}
+                          <span className="font-bold text-[#002546]">{project.client}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-[#A3AED0] font-bold">{project.business}</td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-4 w-40">
+                          <span className="text-sm font-bold text-[#002546] w-8">{project.progress}%</span>
+                          <div className="w-full bg-[#F4F7FE] rounded-full h-2.5 overflow-hidden shadow-inner border border-[#EAEFF5]/50">
+                            <div className={`h-full rounded-full bg-gradient-to-r ${project.gradient} relative group-hover:scale-y-110 transition-transform`} style={{ width: `${project.progress}%` }}>
+                              <div className="absolute top-0 right-0 bottom-0 w-4 bg-white/30 blur-[2px]"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`px-4 py-1.5 text-xs font-bold rounded-full bg-gradient-to-r ${project.gradient} bg-opacity-10 text-transparent bg-clip-text shadow-[0_2px_10px_rgba(0,0,0,0.05)] border border-white`}>
+                          {project.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-[#A3AED0] font-bold text-right">
+                        {project.date}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   );

@@ -11,10 +11,12 @@ const ROLE_REDIRECTS = {
   admin: '/dashboard/admin',
   editor: '/dashboard/editor',
   sales: '/dashboard/sales',
+  pm: '/dashboard/pm',
+  writer: '/dashboard/writer',
 };
 
 export default function Login() {
-  const [form, setForm] = useState({ email: '', password: '' });
+  const [form, setForm] = useState({ email: 'admin@gmail.com', password: '123456' });
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();

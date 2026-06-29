@@ -5,7 +5,7 @@
 //   FiPlayCircle, FiChevronLeft, FiChevronRight,
 //   FiAlertCircle, FiGrid, FiVideo
 // } from 'react-icons/fi';
-// import logo from "../../../public/logo.png";
+// const logo = "/logo.png";
 
 // /* ─────────────────────────────────────────────────────────────
 //    STYLES  (injected once, no extra CSS file needed)
@@ -791,7 +791,7 @@ import {
   FiPlayCircle, FiChevronLeft, FiChevronRight,
   FiAlertCircle, FiGrid, FiVideo
 } from 'react-icons/fi';
-import logo from "../../../public/logo.png";
+const logo = "/logo.png";
 
 /* ─────────────────────────────────────────────────────────────
    STYLES  (Injected once)

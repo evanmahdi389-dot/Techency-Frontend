@@ -1,6 +1,6 @@
 import { FiFacebook, FiInstagram, FiMapPin, FiPhone, FiYoutube } from "react-icons/fi"
 
-import logo from "../../../public/logo.png";
+const logo = "/logo.png";
 
 const Footer = () => {
 return (

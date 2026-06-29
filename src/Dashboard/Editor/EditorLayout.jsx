@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { FiUpload, FiList, FiLogOut, FiMenu, FiChevronRight, FiBell } from 'react-icons/fi';
+import { FiUpload, FiList, FiLogOut, FiMenu, FiChevronRight, FiBell, FiCheckSquare } from 'react-icons/fi';
 
-import logo from "../../../public/logo.png";
+const logo = "/logo.png";
 
 const navItems = [
   { to: '/dashboard/editor', label: 'Upload Video', icon: FiUpload, end: true },
+  { to: '/dashboard/editor/queue', label: 'Active Queue', icon: FiCheckSquare },
   { to: '/dashboard/editor/my-uploads', label: 'My Uploads', icon: FiList },
 ];
 

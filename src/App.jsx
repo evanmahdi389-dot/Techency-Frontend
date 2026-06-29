@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { 
-  FiPhone, FiPlayCircle, FiMessageSquare, 
-  FiCamera, FiVideo, FiEdit3, FiUser, 
-  FiMail, FiMapPin, FiFacebook, FiInstagram, FiYoutube 
+import {
+  FiPhone, FiPlayCircle, FiMessageSquare,
+  FiCamera, FiVideo, FiEdit3, FiUser,
+  FiMail, FiMapPin, FiFacebook, FiInstagram, FiYoutube
 } from 'react-icons/fi';
 
-import logo from "../public/logo.png";
-import bannerImage from "../public/banner1.png";
+const logo = "/logo.png";
+const bannerImage = "/banner1.png";
 
 import Navbar from './Pages/Navber/Navber';
 import Banner from './Pages/Banner/Banner';
@@ -30,13 +30,24 @@ import UserManagement from './Dashboard/Admin/pages/UserManagement';
 import DemoLinksMonitor from './Dashboard/Admin/pages/DemoLinksMonitor';
 import AdminUpload from './Dashboard/Admin/pages/AdminUpload';
 
+import OrderSourceManagement from './Dashboard/Admin/pages/OrderSourceManagement';
+import ServiceTypeManagement from './Dashboard/Admin/pages/ServiceTypeManagement';
+import RoleManagement from './Dashboard/Admin/pages/RoleManagement';
 import EditorLayout from './Dashboard/Editor/EditorLayout';
 import UploadVideo from './Dashboard/Editor/pages/UploadVideo';
 import MyUploads from './Dashboard/Editor/pages/MyUploads';
+import EditorDashboard from './Dashboard/RoleViews/EditorDashboard';
 
 import SalesLayout from './Dashboard/SalesExecutive/SalesLayout';
 import BrowseVideos from './Dashboard/SalesExecutive/pages/BrowseVideos';
 import MyDemoLinks from './Dashboard/SalesExecutive/pages/MyDemoLinks';
+
+import PMLayout from './Dashboard/ProjectManager/PMLayout';
+import PMDashboard from './Dashboard/RoleViews/PMDashboard';
+
+import WriterLayout from './Dashboard/Writer/WriterLayout';
+import WriterDashboard from './Dashboard/RoleViews/WriterDashboard';
+import SalesBookingForm from './Dashboard/SalesExecutive/pages/SalesBookingForm';
 
 export default function App() {
   return (
@@ -49,23 +60,39 @@ export default function App() {
       {/* Admin Dashboard */}
       <Route path="/dashboard/admin" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout /></ProtectedRoute>}>
         <Route index element={<AdminOverview />} />
+
         <Route path="videos" element={<VideoManagement />} />
         <Route path="categories" element={<CategoryManagement />} />
         <Route path="users" element={<UserManagement />} />
         <Route path="demo-links" element={<DemoLinksMonitor />} />
         <Route path="upload" element={<AdminUpload />} />
+        <Route path="order-sources" element={<OrderSourceManagement />} />
+        <Route path="service-types" element={<ServiceTypeManagement />} />
+        <Route path="roles" element={<RoleManagement />} />
       </Route>
 
       {/* Editor Dashboard */}
       <Route path="/dashboard/editor" element={<ProtectedRoute allowedRoles={['editor', 'admin']}><EditorLayout /></ProtectedRoute>}>
         <Route index element={<UploadVideo />} />
+        <Route path="queue" element={<EditorDashboard />} />
         <Route path="my-uploads" element={<MyUploads />} />
       </Route>
 
       {/* Sales Dashboard */}
       <Route path="/dashboard/sales" element={<ProtectedRoute allowedRoles={['sales', 'admin']}><SalesLayout /></ProtectedRoute>}>
         <Route index element={<BrowseVideos />} />
+        <Route path="book-order" element={<SalesBookingForm />} />
         <Route path="demo-links" element={<MyDemoLinks />} />
+      </Route>
+
+      {/* Project Manager Dashboard */}
+      <Route path="/dashboard/pm" element={<ProtectedRoute allowedRoles={['pm', 'admin']}><PMLayout /></ProtectedRoute>}>
+        <Route index element={<PMDashboard />} />
+      </Route>
+
+      {/* Writer Dashboard */}
+      <Route path="/dashboard/writer" element={<ProtectedRoute allowedRoles={['writer', 'admin']}><WriterLayout /></ProtectedRoute>}>
+        <Route index element={<WriterDashboard />} />
       </Route>
 
       {/* Fallback */}
@@ -79,7 +106,7 @@ function LandingPage() {
     <div className="bg-[#0a0a0a] min-h-screen text-white font-sans selection:bg-red-600 selection:text-white">
       <Navbar />
       <main>
-        <Banner/>
+        <Banner />
         <About />
         <Brands />
         <Services />
@@ -109,10 +136,10 @@ function Services() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 relative">
         {/* Connecting Line (Decorative) */}
         <div className="absolute top-1/2 left-0 w-full h-[1px] bg-red-500/20 -z-10 hidden md:block"></div>
-        
+
         {services.map((service) => (
-          <div 
-            key={service.id} 
+          <div
+            key={service.id}
             className={`bg-[#111] border border-white/5 rounded-2xl p-8 flex flex-col items-center justify-center text-center hover:border-red-500/50 hover:bg-[#151515] transition-all duration-300 group ${service.offset}`}
           >
             <div className="text-red-500 mb-4 group-hover:scale-110 transition-transform">
@@ -133,14 +160,14 @@ function Team() {
     <section className="py-20 px-4 relative overflow-hidden border-t border-white/5">
       {/* Background glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-red-600/5 rounded-full blur-[100px] -z-10"></div>
-      
+
       <div className="max-w-3xl mx-auto text-center">
         <h2 className="text-3xl font-bold mb-12">Meet Our <span className="text-red-500">Expert Team</span></h2>
-        
+
         <div className="flex flex-col items-center">
           <div className="w-40 h-40 rounded-full bg-gray-800 mb-6 border-4 border-[#1a1a1a] shadow-xl overflow-hidden relative">
-             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-             <img src="https://ui-avatars.com/api/?name=Md+Fakhrul+Islam&background=random" alt="Founder" className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+            <img src="https://ui-avatars.com/api/?name=Md+Fakhrul+Islam&background=random" alt="Founder" className="w-full h-full object-cover" />
           </div>
           <h3 className="text-xl font-bold">Md Fakhrul Islam</h3>
           <p className="text-red-500 text-sm font-semibold mb-4">Founder & CEO</p>
@@ -164,7 +191,7 @@ function RecentWork() {
   return (
     <section id="portfolio" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       <h2 className="text-3xl font-bold text-center mb-12">Our Recent <span className="text-red-500">Work</span></h2>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
         {works.map((work) => (
           <div key={work.id} className="group relative rounded-xl overflow-hidden cursor-pointer">
@@ -179,7 +206,7 @@ function RecentWork() {
           </div>
         ))}
       </div>
-      
+
       <div className="text-center">
         <a href="#" className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors">
           See All Work <FiPlayCircle />
@@ -198,7 +225,7 @@ function Contact() {
           <p className="text-gray-400 text-sm leading-relaxed mb-10 max-w-md">
             Whether you've got a big idea, a rough sketch, or just want to say hey, we're here. No pressure, no weird forms. Just send us a message and let's see where it goes.
           </p>
-          
+
           <div className="space-y-6">
             <div className="flex items-start gap-4">
               <div className="bg-white/5 p-3 rounded-full text-red-500">
@@ -209,7 +236,7 @@ function Contact() {
                 <p className="font-semibold">+88 01646-057717</p>
               </div>
             </div>
-            
+
             <div className="flex items-start gap-4">
               <div className="bg-white/5 p-3 rounded-full text-red-500">
                 <FiMail className="w-5 h-5" />
@@ -219,19 +246,19 @@ function Contact() {
                 <p className="font-semibold">officialtechency@gmail.com</p>
               </div>
             </div>
-            
+
             <div className="flex items-start gap-4">
               <div className="bg-white/5 p-3 rounded-full text-red-500">
                 <FiMapPin className="w-5 h-5" />
               </div>
               <div>
                 <p className="text-sm text-gray-500">Address</p>
-                <p className="font-semibold text-sm">House- 31 Road-2, 5th Floor, Block- C,<br/>Banasree, Rampura, Dhaka, 1219</p>
+                <p className="font-semibold text-sm">House- 31 Road-2, 5th Floor, Block- C,<br />Banasree, Rampura, Dhaka, 1219</p>
               </div>
             </div>
           </div>
         </div>
-        
+
         {/* Contact Form */}
         <div className="bg-[#111] p-8 rounded-2xl border border-white/5">
           <form className="space-y-4">

@@ -1,5 +1,5 @@
-import logo from "../../../public/logo.png";
-import aboutBg from "../../../public/aboutbg.jpg";
+const logo = "/logo.png";
+const aboutBg = "/aboutbg.jpg";
 import { FiPhone, FiPenTool, FiUser, FiCamera, FiVideo } from "react-icons/fi";
 import { motion } from "framer-motion";
 

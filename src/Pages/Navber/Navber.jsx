@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import logo from "../../../public/logo.png";
+const logo = "/logo.png";
 import { FiPhone } from "react-icons/fi";
 
 

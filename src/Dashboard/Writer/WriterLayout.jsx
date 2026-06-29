@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { FiGrid, FiLink2, FiLogOut, FiMenu, FiChevronRight, FiBell, FiPlusCircle } from 'react-icons/fi';
+import { FiEdit3, FiLogOut, FiMenu, FiChevronRight, FiBell } from 'react-icons/fi';
 
 const logo = "/logo.png";
 
 const navItems = [
-  { to: '/dashboard/sales', label: 'Browse Videos', icon: FiGrid, end: true },
-  { to: '/dashboard/sales/book-order', label: 'Book Order', icon: FiPlusCircle },
-  { to: '/dashboard/sales/demo-links', label: 'My Demo Links', icon: FiLink2 },
+  { to: '/dashboard/writer', label: 'Active Scripts', icon: FiEdit3, end: true },
 ];
 
-export default function SalesLayout() {
+export default function WriterLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -50,7 +48,8 @@ export default function SalesLayout() {
               end={end}
               onClick={() => setSidebarOpen(false)}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-[5px] text-sm font-medium transition-all group ${isActive ? 'bg-green-600/15 text-green-400' : 'text-gray-400 hover:text-white hover:bg-white/5'
+                `flex items-center gap-3 px-4 py-3 rounded-[5px] text-sm font-medium transition-all group ${
+                  isActive ? 'bg-orange-600/15 text-orange-400' : 'text-gray-400 hover:text-white hover:bg-white/5'
                 }`
               }
             >
@@ -70,9 +69,9 @@ export default function SalesLayout() {
             <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-gray-400 hover:text-white">
               <FiMenu className="w-6 h-6" />
             </button>
-            <p className="text-white font-semibold text-sm lg:hidden">Sales Panel</p>
+            <p className="text-white font-semibold text-sm lg:hidden">Writer Panel</p>
             <div className="hidden lg:block">
-              <h1 className="text-white font-semibold text-lg">Welcome, {user?.name || 'Sales'} 👋</h1>
+              <h1 className="text-white font-semibold text-lg">Welcome, {user?.name || 'Writer'} 👋</h1>
               <p className="text-gray-400 text-sm">Here's what's happening with your platform today.</p>
             </div>
           </div>
@@ -80,7 +79,7 @@ export default function SalesLayout() {
           <div className="flex items-center gap-4">
             <button className="relative p-2 text-gray-400 hover:text-white transition-colors">
               <FiBell className="w-5 h-5" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-green-500 rounded-full"></span>
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-orange-500 rounded-full"></span>
             </button>
             <div className="relative">
               <div 
@@ -91,7 +90,7 @@ export default function SalesLayout() {
                   <p className="text-white text-sm font-medium">{user?.name}</p>
                   <p className="text-gray-500 text-xs capitalize">{user?.role}</p>
                 </div>
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-green-500 to-emerald-400 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                   {user?.name?.[0]?.toUpperCase()}
                 </div>
               </div>
