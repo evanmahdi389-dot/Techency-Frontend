@@ -37,6 +37,7 @@ import EditorLayout from './Dashboard/Editor/EditorLayout';
 import UploadVideo from './Dashboard/Editor/pages/UploadVideo';
 import MyUploads from './Dashboard/Editor/pages/MyUploads';
 import EditorDashboard from './Dashboard/RoleViews/EditorDashboard';
+import UserProfile from './components/Profile/UserProfile';
 
 import SalesLayout from './Dashboard/SalesExecutive/SalesLayout';
 import BrowseVideos from './Dashboard/SalesExecutive/pages/BrowseVideos';
@@ -60,6 +61,7 @@ export default function App() {
       {/* Admin Dashboard */}
       <Route path="/dashboard/admin" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout /></ProtectedRoute>}>
         <Route index element={<AdminOverview />} />
+        <Route path="profile" element={<UserProfile />} />
 
         <Route path="videos" element={<VideoManagement />} />
         <Route path="categories" element={<CategoryManagement />} />
@@ -74,6 +76,7 @@ export default function App() {
       {/* Editor Dashboard */}
       <Route path="/dashboard/editor" element={<ProtectedRoute allowedRoles={['editor', 'admin']}><EditorLayout /></ProtectedRoute>}>
         <Route index element={<UploadVideo />} />
+        <Route path="profile" element={<UserProfile />} />
         <Route path="queue" element={<EditorDashboard />} />
         <Route path="my-uploads" element={<MyUploads />} />
       </Route>
@@ -81,6 +84,7 @@ export default function App() {
       {/* Sales Dashboard */}
       <Route path="/dashboard/sales" element={<ProtectedRoute allowedRoles={['sales executive', 'admin']}><SalesLayout /></ProtectedRoute>}>
         <Route index element={<BrowseVideos />} />
+        <Route path="profile" element={<UserProfile />} />
         <Route path="book-order" element={<SalesBookingForm />} />
         <Route path="demo-links" element={<DemoLinksMonitor />} />
         <Route path="videos" element={<VideoManagement />} />
@@ -89,6 +93,7 @@ export default function App() {
       {/* Project Manager Dashboard */}
       <Route path="/dashboard/pm" element={<ProtectedRoute allowedRoles={['project manager', 'admin']}><PMLayout /></ProtectedRoute>}>
         <Route index element={<PMDashboard />} />
+        <Route path="profile" element={<UserProfile />} />
         <Route path="videos" element={<VideoManagement />} />
         <Route path="demo-links" element={<DemoLinksMonitor />} />
         <Route path="upload" element={<UploadCenter />} />
@@ -97,6 +102,7 @@ export default function App() {
       {/* Writer Dashboard */}
       <Route path="/dashboard/writer" element={<ProtectedRoute allowedRoles={['script writer', 'admin']}><WriterLayout /></ProtectedRoute>}>
         <Route index element={<WriterDashboard />} />
+        <Route path="profile" element={<UserProfile />} />
       </Route>
 
       {/* Fallback */}

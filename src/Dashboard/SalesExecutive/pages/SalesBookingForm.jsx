@@ -81,7 +81,7 @@ const SalesBookingForm = () => {
 
           <div className="overflow-x-auto bg-white rounded-[6px] border border-[#EAEFF5] shadow-[0px_12px_28px_rgba(0,37,70,0.08)] [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-white [&::-webkit-scrollbar-thumb]:bg-[#002546]/20 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-[#002546]/30 transition-all pb-2">
             <table className="w-full text-sm text-left">
-              <thead className="text-xs uppercase bg-[#F4F7FE] text-[#002546] border-b border-[#EAEFF5] whitespace-nowrap font-extrabold">
+              <thead className="text-xs uppercase bg-[#e0e2e6] text-[#002546] border-b border-[#EAEFF5] whitespace-nowrap font-extrabold">
                 <tr>
                   <th className="px-4 py-4 font-semibold">Order ID</th>
                   <th className="px-4 py-4 font-semibold">Order Type</th>
@@ -102,7 +102,7 @@ const SalesBookingForm = () => {
               </thead>
               <tbody className="whitespace-nowrap">
                 {/* Mock Data Row */}
-                <tr className="border-b border-[#EAEFF5] hover:bg-[#F4F7FE] transition-colors font-bold text-[#A3AED0]">
+                <tr className="border-b border-[#EAEFF5] hover:bg-[#e0e2e6] transition-colors font-bold text-[#A3AED0]">
                   <td className="px-4 py-4">701</td>
                   <td className="px-4 py-4">Whatsapp</td>
                   <td className="px-4 py-4">Md Sadiqur</td>
@@ -114,8 +114,8 @@ const SalesBookingForm = () => {
                   <td className="px-4 py-4">Male & Female</td>
                   <td className="px-4 py-4">
                     <div className="flex flex-col gap-1 text-xs">
-                      <span className="bg-[#F4F7FE] px-2 py-1 rounded text-[#002546]">1.Saif</span>
-                      <span className="bg-[#F4F7FE] px-2 py-1 rounded text-[#002546]">2.Ridi</span>
+                      <span className="bg-[#e0e2e6] px-2 py-1 rounded text-[#002546]">1.Saif</span>
+                      <span className="bg-[#e0e2e6] px-2 py-1 rounded text-[#002546]">2.Ridi</span>
                     </div>
                   </td>
                   <td className="px-4 py-4 text-center">5000</td>
@@ -162,14 +162,14 @@ const SalesBookingForm = () => {
               <div className="space-y-4 animate-fade-in">
                 <h3 className="text-xl font-extrabold mb-4 text-[#002546]">Client Details</h3>
                 <div className="grid grid-cols-2 gap-4">
-                  <input type="text" placeholder="Client Name" className="p-3 bg-[#F4F7FE] border border-slate-200 rounded-lg w-full focus:ring-2 focus:ring-[#002546] outline-none text-[#002546] placeholder-[#A3AED0] font-bold" required
+                  <input type="text" placeholder="Client Name" className="p-3 bg-[#e0e2e6] border border-slate-200 rounded-lg w-full focus:ring-2 focus:ring-[#002546] outline-none text-[#002546] placeholder-[#A3AED0] font-bold" required
                     value={formData.clientInfo.name} onChange={(e) => handleChange('clientInfo', 'name', e.target.value)} />
-                  <input type="text" placeholder="Business Name" className="p-3 bg-[#F4F7FE] border border-slate-200 rounded-lg w-full focus:ring-2 focus:ring-[#002546] outline-none text-[#002546] placeholder-[#A3AED0] font-bold"
+                  <input type="text" placeholder="Business Name" className="p-3 bg-[#e0e2e6] border border-slate-200 rounded-lg w-full focus:ring-2 focus:ring-[#002546] outline-none text-[#002546] placeholder-[#A3AED0] font-bold"
                     value={formData.clientInfo.businessName} onChange={(e) => handleChange('clientInfo', 'businessName', e.target.value)} />
-                  <input type="text" placeholder="Phone" className="p-3 bg-[#F4F7FE] border border-slate-200 rounded-lg w-full focus:ring-2 focus:ring-[#002546] outline-none text-[#002546] placeholder-[#A3AED0] font-bold" required
+                  <input type="text" placeholder="Phone" className="p-3 bg-[#e0e2e6] border border-slate-200 rounded-lg w-full focus:ring-2 focus:ring-[#002546] outline-none text-[#002546] placeholder-[#A3AED0] font-bold" required
                     value={formData.clientInfo.phone} onChange={(e) => handleChange('clientInfo', 'phone', e.target.value)} />
 
-                  <select className="p-3 bg-[#F4F7FE] border border-slate-200 rounded-lg w-full focus:ring-2 focus:ring-[#002546] outline-none text-[#002546] font-bold"
+                  <select className="p-3 bg-[#e0e2e6] border border-slate-200 rounded-lg w-full focus:ring-2 focus:ring-[#002546] outline-none text-[#002546] font-bold"
                     value={formData.clientInfo.orderSource} onChange={(e) => handleChange('clientInfo', 'orderSource', e.target.value)}>
                     {settings.orderSources.map(src => <option key={src} value={src}>{src}</option>)}
                   </select>
@@ -185,11 +185,11 @@ const SalesBookingForm = () => {
                   <div className="p-4 bg-green-50 text-green-600 border border-green-100 rounded-lg font-bold">Product received in office.</div>
                 ) : (
                   <div className="grid grid-cols-2 gap-4">
-                    <input type="text" placeholder="Courier Name" className="p-3 bg-[#F4F7FE] border border-slate-200 rounded-lg w-full focus:ring-2 focus:ring-[#002546] outline-none text-[#002546] placeholder-[#A3AED0] font-bold"
+                    <input type="text" placeholder="Courier Name" className="p-3 bg-[#e0e2e6] border border-slate-200 rounded-lg w-full focus:ring-2 focus:ring-[#002546] outline-none text-[#002546] placeholder-[#A3AED0] font-bold"
                       value={formData.productCourierTracking.courierName} onChange={(e) => handleChange('productCourierTracking', 'courierName', e.target.value)} />
-                    <input type="text" placeholder="Tracking ID" className="p-3 bg-[#F4F7FE] border border-slate-200 rounded-lg w-full focus:ring-2 focus:ring-[#002546] outline-none text-[#002546] placeholder-[#A3AED0] font-bold"
+                    <input type="text" placeholder="Tracking ID" className="p-3 bg-[#e0e2e6] border border-slate-200 rounded-lg w-full focus:ring-2 focus:ring-[#002546] outline-none text-[#002546] placeholder-[#A3AED0] font-bold"
                       value={formData.productCourierTracking.trackingId} onChange={(e) => handleChange('productCourierTracking', 'trackingId', e.target.value)} />
-                    <select className="p-3 bg-[#F4F7FE] border border-slate-200 rounded-lg w-full focus:ring-2 focus:ring-[#002546] outline-none col-span-2 text-[#002546] font-bold"
+                    <select className="p-3 bg-[#e0e2e6] border border-slate-200 rounded-lg w-full focus:ring-2 focus:ring-[#002546] outline-none col-span-2 text-[#002546] font-bold"
                       value={formData.productCourierTracking.status} onChange={(e) => handleChange('productCourierTracking', 'status', e.target.value)}>
                       <option value="Not Sent Yet">Not Sent Yet</option>
                       <option value="On the Way">On the Way</option>
@@ -205,12 +205,12 @@ const SalesBookingForm = () => {
               <div className="space-y-4 animate-fade-in">
                 <h3 className="text-xl font-extrabold mb-4 text-[#002546]">Service Details</h3>
                 <div className="grid grid-cols-2 gap-4">
-                  <select className="p-3 bg-[#F4F7FE] border border-slate-200 rounded-lg w-full focus:ring-2 focus:ring-[#002546] outline-none text-[#002546] font-bold"
+                  <select className="p-3 bg-[#e0e2e6] border border-slate-200 rounded-lg w-full focus:ring-2 focus:ring-[#002546] outline-none text-[#002546] font-bold"
                     value={formData.serviceDetails.serviceType} onChange={(e) => handleChange('serviceDetails', 'serviceType', e.target.value)}>
                     {settings.serviceTypes.map(type => <option key={type} value={type}>{type}</option>)}
                   </select>
                   {formData.serviceDetails.serviceType === 'Outdoor' && (
-                    <input type="text" placeholder="Location" className="p-3 bg-[#F4F7FE] border border-slate-200 rounded-lg w-full focus:ring-2 focus:ring-[#002546] outline-none text-[#002546] placeholder-[#A3AED0] font-bold animate-fade-in" required
+                    <input type="text" placeholder="Location" className="p-3 bg-[#e0e2e6] border border-slate-200 rounded-lg w-full focus:ring-2 focus:ring-[#002546] outline-none text-[#002546] placeholder-[#A3AED0] font-bold animate-fade-in" required
                       value={formData.serviceDetails.location} onChange={(e) => handleChange('serviceDetails', 'location', e.target.value)} />
                   )}
                 </div>
@@ -222,14 +222,14 @@ const SalesBookingForm = () => {
               <div className="space-y-4 animate-fade-in">
                 <h3 className="text-xl font-extrabold mb-4 text-[#002546]">Model Casting</h3>
                 <div className="grid grid-cols-2 gap-4">
-                  <input type="number" placeholder="Number of Models" className="p-3 bg-[#F4F7FE] border border-slate-200 rounded-lg w-full focus:ring-2 focus:ring-[#002546] outline-none text-[#002546] placeholder-[#A3AED0] font-bold"
+                  <input type="number" placeholder="Number of Models" className="p-3 bg-[#e0e2e6] border border-slate-200 rounded-lg w-full focus:ring-2 focus:ring-[#002546] outline-none text-[#002546] placeholder-[#A3AED0] font-bold"
                     value={formData.modelCasting.numberOfModels} onChange={(e) => handleChange('modelCasting', 'numberOfModels', e.target.value)} />
 
                   <div className="col-span-2">
                     <p className="text-sm text-[#A3AED0] font-bold mb-2">Select Models</p>
                     <div className="flex gap-4 flex-wrap">
                       {models.map(m => (
-                        <label key={m._id} className="flex items-center gap-2 cursor-pointer bg-[#F4F7FE] p-2 rounded-lg border border-slate-200 hover:border-[#002546] transition-colors font-bold text-[#002546]">
+                        <label key={m._id} className="flex items-center gap-2 cursor-pointer bg-[#e0e2e6] p-2 rounded-lg border border-slate-200 hover:border-[#002546] transition-colors font-bold text-[#002546]">
                           <input type="checkbox"
                             className="accent-[#002546]"
                             checked={formData.modelCasting.modelIds.includes(m._id)}
@@ -256,17 +256,17 @@ const SalesBookingForm = () => {
                 <div className="grid grid-cols-3 gap-4">
                   <div>
                     <label className="block text-sm text-[#A3AED0] font-bold mb-1">Total</label>
-                    <input type="number" className="p-3 bg-[#F4F7FE] border border-slate-200 rounded-lg w-full focus:ring-2 focus:ring-[#002546] outline-none text-[#002546] font-bold" required
+                    <input type="number" className="p-3 bg-[#e0e2e6] border border-slate-200 rounded-lg w-full focus:ring-2 focus:ring-[#002546] outline-none text-[#002546] font-bold" required
                       value={formData.billing.total} onChange={(e) => handleChange('billing', 'total', e.target.value)} />
                   </div>
                   <div>
                     <label className="block text-sm text-[#A3AED0] font-bold mb-1">Paid Amount</label>
-                    <input type="number" className="p-3 bg-[#F4F7FE] border border-slate-200 rounded-lg w-full focus:ring-2 focus:ring-[#002546] outline-none text-[#002546] font-bold"
+                    <input type="number" className="p-3 bg-[#e0e2e6] border border-slate-200 rounded-lg w-full focus:ring-2 focus:ring-[#002546] outline-none text-[#002546] font-bold"
                       value={formData.billing.paid} onChange={(e) => handleChange('billing', 'paid', e.target.value)} />
                   </div>
                   <div>
                     <label className="block text-sm text-[#A3AED0] font-bold mb-1">Due</label>
-                    <input type="number" className="p-3 bg-[#F4F7FE] border border-slate-200 rounded-lg w-full focus:ring-2 focus:ring-[#002546] outline-none text-[#002546] font-bold" required
+                    <input type="number" className="p-3 bg-[#e0e2e6] border border-slate-200 rounded-lg w-full focus:ring-2 focus:ring-[#002546] outline-none text-[#002546] font-bold" required
                       value={formData.billing.due} onChange={(e) => handleChange('billing', 'due', e.target.value)} />
                   </div>
                 </div>
@@ -276,13 +276,13 @@ const SalesBookingForm = () => {
             {/* Controls */}
             <div className="flex justify-between mt-8 pt-4 border-t border-[#EAEFF5]">
               {step > 1 ? (
-                <button type="button" onClick={handlePrev} className="px-6 py-2 border border-slate-200 rounded-lg text-[#A3AED0] font-bold hover:bg-[#F4F7FE] transition-colors">Back</button>
+                <button type="button" onClick={handlePrev} className="px-6 py-2 border border-slate-200 rounded-lg text-white font-bold bg-red-400 hover:bg-red-500 hover:text-white transition-colors cursor-pointer">Back</button>
               ) : <div></div>}
 
               {step < 5 ? (
-                <button type="button" onClick={handleNext} className="px-6 py-2 bg-[#002546] text-white rounded-lg hover:bg-[#013f77] font-bold transition-colors shadow-[0_4px_12px_rgba(0,37,70,0.15)]">Next</button>
+                <button type="button" onClick={handleNext} className="px-6 py-2 bg-[#002546] text-white rounded-lg hover:bg-[#013f77] font-bold transition-colors shadow-[0_4px_12px_rgba(0,37,70,0.15)] cursor-pointer">Next</button>
               ) : (
-                <button type="submit" className="px-6 py-2 bg-[#002546] text-white rounded-lg hover:bg-[#013f77] transition-all font-bold shadow-[0_4px_12px_rgba(0,37,70,0.15)]">Submit Order</button>
+                <button type="submit" className="px-6 py-2 bg-[#002546] text-white rounded-lg hover:bg-[#013f77] transition-all font-bold shadow-[0_4px_12px_rgba(0,37,70,0.15)] cursor-pointer">Submit Order</button>
               )}
             </div>
           </form>

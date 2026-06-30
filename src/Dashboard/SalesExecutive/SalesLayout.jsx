@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { FiGrid, FiLink2, FiLogOut, FiMenu, FiChevronRight, FiBell, FiPlusCircle, FiVideo } from 'react-icons/fi';
+import { FiGrid, FiLink2, FiLogOut, FiMenu, FiChevronRight, FiBell, FiPlusCircle, FiVideo, FiUser } from 'react-icons/fi';
 
 const logo = "/logo.png";
 
@@ -64,7 +64,7 @@ export default function SalesLayout() {
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-h-screen overflow-x-hidden">
+      <div className="flex-1 flex flex-col h-screen overflow-y-auto">
         {/* Top Header */}
         <header className="flex items-center justify-between px-4 lg:px-4 py-2 lg:py-3 border-b border-gray-200 bg-white z-10 sticky top-0">
           <div className="flex items-center gap-4">
@@ -91,14 +91,26 @@ export default function SalesLayout() {
                   <p className="text-black text-sm font-medium">{user?.name}</p>
                   <p className="text-gray-500 text-xs capitalize">{user?.role}</p>
                 </div>
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#013f77] to-blue-400 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-                  {user?.name?.[0]?.toUpperCase()}
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#013f77] to-blue-400 flex items-center justify-center text-white font-bold text-sm flex-shrink-0 overflow-hidden">
+                  {user?.profileImage ? (
+                    <img src={user.profileImage} alt={user?.name} className="w-full h-full object-cover" />
+                  ) : (
+                    user?.name?.[0]?.toUpperCase()
+                  )}
                 </div>
               </div>
               
               {/* Profile Dropdown */}
               {profileOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-lg py-1 z-50">
+                  <NavLink
+                    to="profile"
+                    onClick={() => setProfileOpen(false)}
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-[#013f77] hover:bg-blue-50 transition-all"
+                  >
+                    <FiUser className="w-4 h-4" />
+                    My Profile
+                  </NavLink>
                   <button
                     onClick={handleLogout}
                     className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-red-600 hover:bg-red-50 transition-all"

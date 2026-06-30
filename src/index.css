@@ -34,4 +34,11 @@
   body {
     @apply bg-[#0a0a0a] text-white;
   }
+  
+  /* Apply consistent global styling for input fields so they don't blend into white backgrounds */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]), 
+  textarea, 
+  select {
+    @apply bg-[#F4F7FE] border border-slate-300 text-[#002546] placeholder-[#A3AED0] focus:ring-2 focus:ring-[#002546] focus:border-[#002546] outline-none rounded-md px-3 py-2 transition-all;
+  }
 }

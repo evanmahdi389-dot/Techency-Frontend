@@ -120,8 +120,12 @@ export default function UserManagement() {
                   <tr key={user._id} className="hover:bg-[#F4F7FE]/50 transition-colors group">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-full bg-[#F4F7FE] flex items-center justify-center text-[#002546] font-bold text-sm shadow-sm border border-white">
-                          <FaUserCircle className='text-[30px]' />
+                        <div className="w-10 h-10 rounded-full bg-[#F4F7FE] flex items-center justify-center text-[#002546] font-bold text-sm shadow-sm border border-white overflow-hidden">
+                          {user.profileImage ? (
+                            <img src={user.profileImage} alt={user.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <FaUserCircle className="text-[30px]" />
+                          )}
                         </div>
                         <div>
                           <p className="text-[#002546] text-sm font-bold">{user.name}</p>
