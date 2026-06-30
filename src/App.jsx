@@ -33,6 +33,7 @@ import UploadCenter from './components/SharedPages/UploadCenter';
 import OrderSourceManagement from './Dashboard/Admin/pages/OrderSourceManagement';
 import ServiceTypeManagement from './Dashboard/Admin/pages/ServiceTypeManagement';
 import RoleManagement from './Dashboard/Admin/pages/RoleManagement';
+import AdminOrderManagement from './Dashboard/Admin/pages/OrderManagement';
 import EditorLayout from './Dashboard/Editor/EditorLayout';
 import UploadVideo from './Dashboard/Editor/pages/UploadVideo';
 import MyUploads from './Dashboard/Editor/pages/MyUploads';
@@ -45,6 +46,7 @@ import BrowseVideos from './Dashboard/SalesExecutive/pages/BrowseVideos';
 
 import PMLayout from './Dashboard/ProjectManager/PMLayout';
 import PMDashboard from './Dashboard/RoleViews/PMDashboard';
+import PMOrderManagement from './Dashboard/ProjectManager/pages/OrderManagement';
 
 import WriterLayout from './Dashboard/Writer/WriterLayout';
 import WriterDashboard from './Dashboard/RoleViews/WriterDashboard';
@@ -74,6 +76,7 @@ export default function App() {
         <Route path="order-sources" element={<OrderSourceManagement />} />
         <Route path="service-types" element={<ServiceTypeManagement />} />
         <Route path="roles" element={<RoleManagement />} />
+        <Route path="orders" element={<AdminOrderManagement />} />
       </Route>
 
       {/* Editor Dashboard */}
@@ -100,6 +103,7 @@ export default function App() {
         <Route path="videos" element={<VideoManagement />} />
         <Route path="demo-links" element={<DemoLinksMonitor />} />
         <Route path="upload" element={<UploadCenter />} />
+        <Route path="orders" element={<PMOrderManagement />} />
       </Route>
 
       {/* Writer Dashboard */}

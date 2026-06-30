@@ -7,6 +7,7 @@ const logo = "/logo.png";
 
 const navItems = [
   { to: '/dashboard/pm', label: 'Overview', icon: FiLayout, end: true },
+  { to: '/dashboard/pm/orders', label: 'Order Management', icon: FiLayout },
   { to: '/dashboard/pm/upload', label: 'Upload Video', icon: FiUpload },
   { to: '/dashboard/pm/videos', label: 'Video Management', icon: FiVideo },
   { to: '/dashboard/pm/demo-links', label: 'Demo Links', icon: FiLink2 },

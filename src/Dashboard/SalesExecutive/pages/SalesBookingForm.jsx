@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import api from '../../../services/api';
 import Input from '../../../components/ui/Input';
 import Select from '../../../components/ui/Select';
+import OrderManagementTable from '../../components/OrderManagementTable';
 
 const SalesBookingForm = () => {
   const [step, setStep] = useState(1);
@@ -10,7 +11,7 @@ const SalesBookingForm = () => {
     productCourierTracking: { deliveryMode: 'Courier', courierName: '', trackingId: '', status: 'Not Sent Yet' },
     serviceDetails: { serviceType: 'Indoor', location: '', expectedShootDate: '', expectedDeliveryDate: '' },
     modelCasting: { totalContent: '', numberOfModels: '', numberOfProductImages: '', modelTypes: [], modelIds: [], modelContents: {}, clientVideoLink: '', numberOfContent: '' },
-    billing: { total: 0, paid: 0, due: 0, method: 'Cash', notes: '' }
+    billing: { total: 5000, paid: 0, due: 0, method: 'Cash', bankName: '', transactionId: '', notes: '' }
   });
 
   const [settings, setSettings] = useState({ orderSources: [], serviceTypes: [] });
@@ -19,6 +20,7 @@ const SalesBookingForm = () => {
 
   const [showForm, setShowForm] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -57,7 +59,33 @@ const SalesBookingForm = () => {
     }));
   };
 
-  const handleNext = () => setStep(prev => prev + 1);
+  const handleNext = () => {
+    let missingFields = {};
+
+    if (step === 1) {
+      if (!formData.clientInfo.name) missingFields['clientInfo.name'] = 'Client Name is required';
+      if (!formData.clientInfo.phone) missingFields['clientInfo.phone'] = 'Phone is required';
+      if (!formData.clientInfo.businessName) missingFields['clientInfo.businessName'] = 'Business Name is required';
+    } else if (step === 3) {
+      if (!formData.serviceDetails.serviceType) missingFields['serviceDetails.serviceType'] = 'Service Type is required';
+    } else if (step === 4) {
+      if (formData.serviceDetails.serviceType?.toLowerCase().includes('video editing')) {
+        if (!formData.modelCasting.clientVideoLink) missingFields['modelCasting.clientVideoLink'] = 'Client Video Link is required';
+        if (!formData.modelCasting.numberOfContent) missingFields['modelCasting.numberOfContent'] = 'Number of content is required';
+      } else {
+        if (!formData.modelCasting.numberOfModels) missingFields['modelCasting.numberOfModels'] = 'Number of Model is required';
+        if (!formData.modelCasting.modelTypes || formData.modelCasting.modelTypes.length === 0) missingFields['modelCasting.modelTypes'] = 'Model Preferences is required';
+      }
+    }
+
+    if (Object.keys(missingFields).length > 0) {
+      setErrors(missingFields);
+      return;
+    }
+
+    setErrors({});
+    setStep(prev => prev + 1);
+  };
   const handlePrev = () => setStep(prev => prev - 1);
 
   const handleSubmit = async (e) => {
@@ -65,12 +93,17 @@ const SalesBookingForm = () => {
     try {
       const payload = { ...formData };
       payload.billing.due = payload.billing.total - payload.billing.paid;
-      // await axios.post('/api/orders', payload);
-      alert('Order created successfully!');
+
+      const res = await api.post('/orders', payload);
+      console.log('Order create success:', res.data);
+
       setShowForm(false);
+      // Let the OrderManagementTable refresh itself or we can trigger a reload
+      window.location.reload();
     } catch (err) {
-      console.error(err);
-      alert('Error creating order');
+      console.error('Error creating order:', err);
+      const errorMsg = err.response?.data?.message || err.response?.data?.error || err.message || 'Unknown error';
+      alert(`Error creating order: ${errorMsg}`);
     }
   };
 
@@ -97,68 +130,7 @@ const SalesBookingForm = () => {
             </div>
           </div>
 
-          <div className="overflow-x-auto bg-white rounded-[6px] border border-[#EAEFF5] shadow-[0px_12px_28px_rgba(0,37,70,0.08)] [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-white [&::-webkit-scrollbar-thumb]:bg-[#002546]/20 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-[#002546]/30 transition-all pb-2">
-            <table className="w-full text-sm text-left">
-              <thead className="text-xs uppercase bg-[#e0e2e6] text-[#002546] border-b border-[#EAEFF5] whitespace-nowrap font-extrabold">
-                <tr>
-                  <th className="px-4 py-4 font-semibold">Order ID</th>
-                  <th className="px-4 py-4 font-semibold">Order Type</th>
-                  <th className="px-4 py-4 font-semibold">Customer Name</th>
-                  <th className="px-4 py-4 font-semibold">Business Name</th>
-                  <th className="px-4 py-4 font-semibold">Phone</th>
-                  <th className="px-4 py-4 font-semibold">Service Type</th>
-                  <th className="px-4 py-4 font-semibold text-center">Total Content</th>
-                  <th className="px-4 py-4 font-semibold text-center">Number Of Media</th>
-                  <th className="px-4 py-4 font-semibold">Model Type</th>
-                  <th className="px-4 py-4 font-semibold">Model Name</th>
-                  <th className="px-4 py-4 font-semibold text-center">Total Amount</th>
-                  <th className="px-4 py-4 font-semibold text-center">Paid Amount</th>
-                  <th className="px-4 py-4 font-semibold text-center">Deu Amount</th>
-                  <th className="px-4 py-4 font-semibold text-center">Status</th>
-                  <th className="px-4 py-4 font-semibold text-center">Action</th>
-                </tr>
-              </thead>
-              <tbody className="whitespace-nowrap">
-                {/* Mock Data Row */}
-                <tr className="border-b border-[#EAEFF5] hover:bg-[#e0e2e6] transition-colors font-bold text-[#A3AED0]">
-                  <td className="px-4 py-4">701</td>
-                  <td className="px-4 py-4">Whatsapp</td>
-                  <td className="px-4 py-4">Md Sadiqur</td>
-                  <td className="px-4 py-4">Gawzia Mart</td>
-                  <td className="px-4 py-4">01306359111</td>
-                  <td className="px-4 py-4">Indoor</td>
-                  <td className="px-4 py-4 text-center">05</td>
-                  <td className="px-4 py-4 text-center">02</td>
-                  <td className="px-4 py-4">Male & Female</td>
-                  <td className="px-4 py-4">
-                    <div className="flex flex-col gap-1 text-xs">
-                      <span className="bg-[#e0e2e6] px-2 py-1 rounded text-[#002546]">1.Saif</span>
-                      <span className="bg-[#e0e2e6] px-2 py-1 rounded text-[#002546]">2.Ridi</span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-4 text-center">5000</td>
-                  <td className="px-4 py-4 text-center">2500</td>
-                  <td className="px-4 py-4 text-center">2500</td>
-                  <td className="px-4 py-4 text-center">
-                    <span className="px-2 py-1 bg-yellow-500/20 text-yellow-400 text-xs rounded-full border border-yellow-500/30">Pending</span>
-                  </td>
-                  <td className="px-4 py-4">
-                    <div className="flex items-center justify-center gap-3">
-                      <button className="text-[#A3AED0] hover:text-[#002546] transition-colors" title="View">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-                      </button>
-                      <button className="text-green-500 hover:text-green-400 transition-colors" title="Edit">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
-                      </button>
-                      <button className="text-red-500 hover:text-red-400 transition-colors" title="Delete">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <OrderManagementTable role="Sales Executive" />
         </div>
       ) : (
         <div className="max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-[0px_12px_28px_rgba(0,37,70,0.08)] mt-8 border border-slate-100 relative">
@@ -181,11 +153,14 @@ const SalesBookingForm = () => {
                 <h3 className="text-xl font-extrabold mb-4 text-[#002546]">Client Details</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <Input label="Client Name" type="text" placeholder="Client Name" required
-                    value={formData.clientInfo.name} onChange={(e) => handleChange('clientInfo', 'name', e.target.value)} />
-                  <Input label="Business Name" type="text" placeholder="Business Name"
-                    value={formData.clientInfo.businessName} onChange={(e) => handleChange('clientInfo', 'businessName', e.target.value)} />
+                    error={errors['clientInfo.name']}
+                    value={formData.clientInfo.name} onChange={(e) => { handleChange('clientInfo', 'name', e.target.value); setErrors({ ...errors, 'clientInfo.name': null }) }} />
+                  <Input label="Business Name" type="text" placeholder="Business Name" required
+                    error={errors['clientInfo.businessName']}
+                    value={formData.clientInfo.businessName} onChange={(e) => { handleChange('clientInfo', 'businessName', e.target.value); setErrors({ ...errors, 'clientInfo.businessName': null }) }} />
                   <Input label="Phone" type="text" placeholder="Phone" required
-                    value={formData.clientInfo.phone} onChange={(e) => handleChange('clientInfo', 'phone', e.target.value)} />
+                    error={errors['clientInfo.phone']}
+                    value={formData.clientInfo.phone} onChange={(e) => { handleChange('clientInfo', 'phone', e.target.value); setErrors({ ...errors, 'clientInfo.phone': null }) }} />
                   <Select label="Order Source" options={settings.orderSources}
                     value={formData.clientInfo.orderSource} onChange={(e) => handleChange('clientInfo', 'orderSource', e.target.value)} />
                 </div>
@@ -200,7 +175,7 @@ const SalesBookingForm = () => {
                   <div className="p-4 bg-green-50 text-green-600 border border-green-100 rounded-lg font-bold">Product received in office.</div>
                 ) : (
                   <div className="grid grid-cols-2 gap-4">
-                    <Input label="Courier Name" type="text" placeholder="Courier Name"
+                    <Select label="Courier Name" options={['Steadfast', 'Pathao', 'RedX', 'SA Paribahan', 'Sundarban Courier', 'Karatoa Courier', 'E-Courier', 'Paperfly', 'Other']}
                       value={formData.productCourierTracking.courierName} onChange={(e) => handleChange('productCourierTracking', 'courierName', e.target.value)} />
                     <Input label="Tracking ID" type="text" placeholder="Tracking ID"
                       value={formData.productCourierTracking.trackingId} onChange={(e) => handleChange('productCourierTracking', 'trackingId', e.target.value)} />
@@ -216,10 +191,11 @@ const SalesBookingForm = () => {
               <div className="space-y-4 animate-fade-in">
                 <h3 className="text-xl font-extrabold mb-4 text-[#002546]">Service Details</h3>
                 <div className="grid grid-cols-2 gap-4">
-                  <Select label="Service Type" options={settings.serviceTypes}
-                    value={formData.serviceDetails.serviceType} onChange={(e) => handleChange('serviceDetails', 'serviceType', e.target.value)} />
+                  <Select label="Service Type" options={settings.serviceTypes} required
+                    error={errors['serviceDetails.serviceType']}
+                    value={formData.serviceDetails.serviceType} onChange={(e) => { handleChange('serviceDetails', 'serviceType', e.target.value); setErrors({ ...errors, 'serviceDetails.serviceType': null }) }} />
                   {formData.serviceDetails.serviceType === 'Outdoor' && (
-                    <Input label="Location" type="text" placeholder="Location" className="animate-fade-in" required
+                    <Input label="Location" type="text" placeholder="Location" className="animate-fade-in"
                       value={formData.serviceDetails.location} onChange={(e) => handleChange('serviceDetails', 'location', e.target.value)} />
                   )}
                 </div>
@@ -233,10 +209,12 @@ const SalesBookingForm = () => {
                   <>
                     <h3 className="text-xl font-extrabold mb-4 text-[#002546]">Video Editing Details</h3>
                     <div className="grid grid-cols-2 gap-4">
-                      <Input label="Submit Client Video Link" type="text" placeholder="Paste link here"
-                        value={formData.modelCasting.clientVideoLink} onChange={(e) => handleChange('modelCasting', 'clientVideoLink', e.target.value)} />
-                      <Input label="Number of content" type="number" placeholder="Number of content"
-                        value={formData.modelCasting.numberOfContent} onChange={(e) => handleChange('modelCasting', 'numberOfContent', e.target.value)} />
+                      <Input label="Submit Client Video Link" type="text" placeholder="Paste link here" required
+                        error={errors['modelCasting.clientVideoLink']}
+                        value={formData.modelCasting.clientVideoLink} onChange={(e) => { handleChange('modelCasting', 'clientVideoLink', e.target.value); setErrors({ ...errors, 'modelCasting.clientVideoLink': null }) }} />
+                      <Input label="Number of content" type="number" placeholder="Number of content" required
+                        error={errors['modelCasting.numberOfContent']}
+                        value={formData.modelCasting.numberOfContent} onChange={(e) => { handleChange('modelCasting', 'numberOfContent', e.target.value); setErrors({ ...errors, 'modelCasting.numberOfContent': null }) }} />
                     </div>
                   </>
                 ) : (
@@ -245,13 +223,14 @@ const SalesBookingForm = () => {
                     <div className="grid grid-cols-2 gap-4">
                       <Input label="Total Content" type="number" placeholder="Total Content"
                         value={formData.modelCasting.totalContent} onChange={(e) => handleChange('modelCasting', 'totalContent', e.target.value)} />
-                      <Input label="Number of Model" type="number" placeholder="Number of Model"
-                        value={formData.modelCasting.numberOfModels} onChange={(e) => handleChange('modelCasting', 'numberOfModels', e.target.value)} />
+                      <Input label="Number of Model" type="number" placeholder="Number of Model" required
+                        error={errors['modelCasting.numberOfModels']}
+                        value={formData.modelCasting.numberOfModels} onChange={(e) => { handleChange('modelCasting', 'numberOfModels', e.target.value); setErrors({ ...errors, 'modelCasting.numberOfModels': null }) }} />
                       <Input label="Number Of Product Images" type="number" placeholder="Number of Product Images"
                         value={formData.modelCasting.numberOfProductImages} onChange={(e) => handleChange('modelCasting', 'numberOfProductImages', e.target.value)} />
 
                       <div>
-                        <p className="text-sm text-[#A3AED0] font-bold mb-2">Model Preferences</p>
+                        <p className="text-sm text-[#A3AED0] font-bold mb-2">Model Preferences <span className="text-red-500">*</span></p>
                         <div className="flex gap-3 flex-wrap w-full">
                           {['Male', 'Female'].map(type => {
                             const isSelected = formData.modelCasting.modelTypes.includes(type);
@@ -264,6 +243,7 @@ const SalesBookingForm = () => {
                                     if (e.target.checked) types.push(type);
                                     else types.splice(types.indexOf(type), 1);
                                     handleChange('modelCasting', 'modelTypes', types);
+                                    setErrors({ ...errors, 'modelCasting.modelTypes': null });
                                   }}
                                 />
                                 <span className="relative z-10">{type}</span>
@@ -274,6 +254,7 @@ const SalesBookingForm = () => {
                             );
                           })}
                         </div>
+                        {errors['modelCasting.modelTypes'] && <span className="text-xs text-red-500 mt-1 font-semibold">{errors['modelCasting.modelTypes']}</span>}
                       </div>
 
                     </div>
@@ -281,7 +262,12 @@ const SalesBookingForm = () => {
 
 
                     <div className="mt-6 space-y-3">
-                      {models.map(m => {
+                      {models.filter(m => {
+                        const types = formData.modelCasting.modelTypes;
+                        if (!types || types.length === 0 || types.length === 2) return true;
+                        const mGender = m.gender || (m.name?.toLowerCase().startsWith('mis') ? 'Female' : 'Male');
+                        return types.includes(mGender);
+                      }).map(m => {
                         const isSelected = formData.modelCasting.modelIds.includes(m._id);
                         return (
                           <div key={m._id} className={`group flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 rounded-xl border-2 transition-all duration-300 ${isSelected ? 'border-[#002546] bg-[#f8fbff] shadow-md scale-[1.01]' : 'border-slate-100 bg-white hover:border-[#002546]/30 hover:shadow-sm'}`}>
@@ -345,12 +331,34 @@ const SalesBookingForm = () => {
               <div className="space-y-4 animate-fade-in">
                 <h3 className="text-xl font-extrabold mb-4 text-[#002546]">Billing</h3>
                 <div className="grid grid-cols-3 gap-4">
-                  <Input label="Total" type="number" required
-                    value={formData.billing.total} onChange={(e) => handleChange('billing', 'total', e.target.value)} />
-                  <Input label="Paid Amount" type="number"
-                    value={formData.billing.paid} onChange={(e) => handleChange('billing', 'paid', e.target.value)} />
-                  <Input label="Due" type="number" required
-                    value={formData.billing.due} onChange={(e) => handleChange('billing', 'due', e.target.value)} />
+                  <Input label="Total" type="number"
+                    value={formData.billing.total} 
+                    onChange={(e) => {
+                      const total = Number(e.target.value) || 0;
+                      const paid = Number(formData.billing.paid) || 0;
+                      setFormData(prev => ({ ...prev, billing: { ...prev.billing, total: e.target.value, due: Math.max(0, total - paid) } }));
+                    }} />
+                  <Input label="Paid Amount" type="number" required
+                    error={errors['billing.paid']}
+                    value={formData.billing.paid} 
+                    onChange={(e) => { 
+                      const paid = Number(e.target.value) || 0;
+                      const total = Number(formData.billing.total) || 0;
+                      setFormData(prev => ({ ...prev, billing: { ...prev.billing, paid: e.target.value, due: Math.max(0, total - paid) } }));
+                      setErrors({ ...errors, 'billing.paid': null }); 
+                    }} />
+                  <Input label="Due" type="number" disabled
+                    value={formData.billing.due} />
+                  <Select label="Payment Method" options={['Cash', 'bKash', 'Nagad', 'Rocket', 'Bank Transfer', 'Other']}
+                    value={formData.billing.method} onChange={(e) => handleChange('billing', 'method', e.target.value)} />
+                  {formData.billing.method === 'Bank Transfer' && (
+                    <Select label="Bank Name" options={['Islami Bank', 'Dutch-Bangla Bank (DBBL)', 'BRAC Bank', 'The City Bank', 'Eastern Bank (EBL)', 'Mutual Trust Bank (MTB)', 'Prime Bank', 'Standard Chartered Bank', 'Sonali Bank', 'Pubali Bank', 'Other']}
+                      value={formData.billing.bankName} onChange={(e) => handleChange('billing', 'bankName', e.target.value)} />
+                  )}
+                  {formData.billing.method !== 'Cash' && (
+                    <Input label="Transaction ID / Acc No" type="text" placeholder="TrxID or Account Number"
+                      value={formData.billing.transactionId} onChange={(e) => handleChange('billing', 'transactionId', e.target.value)} />
+                  )}
                 </div>
               </div>
             )}
@@ -363,16 +371,21 @@ const SalesBookingForm = () => {
 
               <div className="flex items-center gap-3">
                 {step === 5 && (
-                  <button type="button" onClick={() => setShowPreview(true)} className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-bold transition-colors shadow-[0_4px_12px_rgba(59,130,246,0.2)] cursor-pointer flex items-center gap-2">
+                  <button type="button" onClick={() => {
+                    if (formData.billing.paid === '' || formData.billing.paid === null || formData.billing.paid === undefined) {
+                      setErrors({ ...errors, 'billing.paid': 'Paid Amount is required' });
+                      return;
+                    }
+                    setErrors({});
+                    setShowPreview(true);
+                  }} className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-bold transition-colors shadow-[0_4px_12px_rgba(59,130,246,0.2)] cursor-pointer flex items-center gap-2">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                     Preview
                   </button>
                 )}
-                {step < 6 ? (
+                {step < 5 ? (
                   <button type="button" onClick={handleNext} className="px-6 py-2 bg-[#002546] text-white rounded-lg hover:bg-[#013f77] font-bold transition-colors shadow-[0_4px_12px_rgba(0,37,70,0.15)] cursor-pointer">Next</button>
-                ) : (
-                  <button type="submit" className="px-6 py-2 bg-[#002546] text-white rounded-lg hover:bg-[#013f77] transition-all font-bold shadow-[0_4px_12px_rgba(0,37,70,0.15)] cursor-pointer">Submit Order</button>
-                )}
+                ) : null}
               </div>
             </div>
           </form>
@@ -469,6 +482,13 @@ const SalesBookingForm = () => {
                   <div className="space-y-3 relative z-10">
                     <div className="flex justify-between items-center pb-2 border-b border-blue-800/50"><span className="text-sm text-blue-200 font-semibold">Total Amount</span><span className="text-base font-extrabold">৳ {formData.billing.total || 0}</span></div>
                     <div className="flex justify-between items-center pb-2 border-b border-blue-800/50"><span className="text-sm text-blue-200 font-semibold">Paid Amount</span><span className="text-base font-extrabold text-green-400">৳ {formData.billing.paid || 0}</span></div>
+                    <div className="flex justify-between items-center pb-2 border-b border-blue-800/50"><span className="text-sm text-blue-200 font-semibold">Payment Method</span><span className="text-sm font-bold">{formData.billing.method}</span></div>
+                    {formData.billing.method === 'Bank Transfer' && (
+                       <div className="flex justify-between items-center pb-2 border-b border-blue-800/50"><span className="text-sm text-blue-200 font-semibold">Bank Name</span><span className="text-sm font-bold">{formData.billing.bankName || '-'}</span></div>
+                    )}
+                    {formData.billing.method !== 'Cash' && (
+                       <div className="flex justify-between items-center pb-2 border-b border-blue-800/50"><span className="text-sm text-blue-200 font-semibold">TrxID/Acc</span><span className="text-sm font-bold font-mono">{formData.billing.transactionId || '-'}</span></div>
+                    )}
                     <div className="flex justify-between items-center pt-1"><span className="text-sm text-blue-200 font-semibold">Due Amount</span><span className="text-xl font-black text-red-300">৳ {formData.billing.total - formData.billing.paid || 0}</span></div>
                   </div>
                 </div>

@@ -11,7 +11,7 @@ const logo = "/logo.png";
 
 const navItems = [
   { to: '/dashboard/admin', label: 'Overview', icon: FiGrid, end: true },
-
+  { to: '/dashboard/admin/orders', label: 'Order Management', icon: FiTag },
   { to: '/dashboard/admin/videos', label: 'Videos', icon: FiVideo },
   { to: '/dashboard/admin/upload', label: 'Upload', icon: FiUpload },
   {
