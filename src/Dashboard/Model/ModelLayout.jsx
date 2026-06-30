@@ -1,18 +1,15 @@
 import React, { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { FiGrid, FiLink2, FiLogOut, FiMenu, FiChevronRight, FiBell, FiPlusCircle, FiVideo, FiUser } from 'react-icons/fi';
+import { FiHome, FiLogOut, FiMenu, FiChevronRight, FiBell, FiUser } from 'react-icons/fi';
 
 const logo = "/logo.png";
 
 const navItems = [
-  { to: '/dashboard/sales', label: 'Browse Videos', icon: FiGrid, end: true },
-  { to: '/dashboard/sales/book-order', label: 'Book Order', icon: FiPlusCircle },
-  { to: '/dashboard/sales/demo-links', label: 'Demo Links', icon: FiLink2 },
-  { to: '/dashboard/sales/videos', label: 'Video Management', icon: FiVideo },
+  { to: '/dashboard/model', label: 'Dashboard', icon: FiHome, end: true },
 ];
 
-export default function SalesLayout() {
+export default function ModelLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -34,7 +31,7 @@ export default function SalesLayout() {
       )}
 
       {/* Sidebar */}
-      <aside className={`fixed lg:sticky top-0 h-screen w-64 bg-[#002546] border-r border-white/5 flex flex-col z-30 transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
+      <aside className={`fixed lg:sticky top-0 h-screen w-64 bg-[#0e0e0e] border-r border-white/5 flex flex-col z-30 transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
         {/* Logo */}
         <div className="p-6 border-b border-white/5">
           <div className="flex items-center gap-3">
@@ -51,7 +48,8 @@ export default function SalesLayout() {
               end={end}
               onClick={() => setSidebarOpen(false)}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-[5px] text-sm font-medium transition-all group ${isActive ? 'bg-white text-[#013f77]' : 'text-white/70 hover:text-white hover:bg-white/10'
+                `flex items-center gap-3 px-4 py-3 rounded-[5px] text-sm font-medium transition-all group ${
+                  isActive ? 'bg-orange-600/15 text-orange-400' : 'text-gray-400 hover:text-white hover:bg-white/5'
                 }`
               }
             >
@@ -66,32 +64,33 @@ export default function SalesLayout() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col h-screen overflow-y-auto">
         {/* Top Header */}
-        <header className="flex items-center justify-between px-4 lg:px-4 py-2 lg:py-3 border-b border-gray-200 bg-white z-20 sticky top-0">
+        <header className="flex items-center justify-between px-4 lg:px-8 py-4 border-b border-white/5 bg-[#0e0e0e] z-10 sticky top-0">
           <div className="flex items-center gap-4">
-            <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-gray-500 hover:text-black">
+            <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-gray-400 hover:text-white">
               <FiMenu className="w-6 h-6" />
             </button>
-            <p className="text-black font-semibold text-sm lg:hidden">Sales Panel</p>
+            <p className="text-white font-semibold text-sm lg:hidden">Model Panel</p>
             <div className="hidden lg:block">
-              <h1 className="text-black font-semibold text-lg">Welcome, {user?.name || 'Sales'} 👋</h1>
+              <h1 className="text-white font-semibold text-lg">Welcome, {user?.name || 'Model'} 👋</h1>
+              <p className="text-gray-400 text-sm">Here's what's happening with your platform today.</p>
             </div>
           </div>
 
           <div className="flex items-center gap-4">
-            <button className="relative p-2 text-gray-500 hover:text-black transition-colors">
+            <button className="relative p-2 text-gray-400 hover:text-white transition-colors">
               <FiBell className="w-5 h-5" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#013f77] rounded-full"></span>
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-orange-500 rounded-full"></span>
             </button>
             <div className="relative">
-              <div
-                className="flex items-center gap-3 pl-4 border-l border-gray-200 cursor-pointer"
+              <div 
+                className="flex items-center gap-3 pl-4 border-l border-white/10 cursor-pointer"
                 onClick={() => setProfileOpen(!profileOpen)}
               >
                 <div className="hidden sm:block text-right">
-                  <p className="text-black text-sm font-medium">{user?.name}</p>
+                  <p className="text-white text-sm font-medium">{user?.name}</p>
                   <p className="text-gray-500 text-xs capitalize">{user?.role}</p>
                 </div>
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#013f77] to-blue-400 flex items-center justify-center text-white font-bold text-sm flex-shrink-0 overflow-hidden">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-orange-500 to-amber-400 flex items-center justify-center text-white font-bold text-sm flex-shrink-0 overflow-hidden">
                   {user?.profileImage ? (
                     <img src={user.profileImage} alt={user?.name} className="w-full h-full object-cover" />
                   ) : (
@@ -99,21 +98,21 @@ export default function SalesLayout() {
                   )}
                 </div>
               </div>
-
+              
               {/* Profile Dropdown */}
               {profileOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-lg py-1 z-50">
+                <div className="absolute right-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-lg py-1 z-50">
                   <NavLink
                     to="profile"
                     onClick={() => setProfileOpen(false)}
-                    className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-[#013f77] hover:bg-blue-50 transition-all"
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-white/5 transition-all"
                   >
                     <FiUser className="w-4 h-4" />
                     My Profile
                   </NavLink>
                   <button
                     onClick={handleLogout}
-                    className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-red-600 hover:bg-red-50 transition-all"
+                    className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-400 hover:text-red-400 hover:bg-red-500/10 transition-all"
                   >
                     <FiLogOut className="w-4 h-4" />
                     Logout
@@ -124,7 +123,7 @@ export default function SalesLayout() {
           </div>
         </header>
 
-        <main className="flex-1 p-4 lg:p-4 bg-[#EAEFF5]">
+        <main className="flex-1 p-6 lg:p-8">
           <Outlet />
         </main>
       </div>

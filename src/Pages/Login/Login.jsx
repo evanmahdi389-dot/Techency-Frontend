@@ -13,6 +13,7 @@ const ROLE_REDIRECTS = {
   'sales executive': '/dashboard/sales',
   'project manager': '/dashboard/pm',
   'script writer': '/dashboard/writer',
+  model: '/dashboard/model',
 };
 
 export default function Login() {

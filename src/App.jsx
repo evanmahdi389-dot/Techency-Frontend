@@ -50,6 +50,9 @@ import WriterLayout from './Dashboard/Writer/WriterLayout';
 import WriterDashboard from './Dashboard/RoleViews/WriterDashboard';
 import SalesBookingForm from './Dashboard/SalesExecutive/pages/SalesBookingForm';
 
+import ModelLayout from './Dashboard/Model/ModelLayout';
+import ModelDashboard from './Dashboard/RoleViews/ModelDashboard';
+
 export default function App() {
   return (
     <Routes>
@@ -102,6 +105,12 @@ export default function App() {
       {/* Writer Dashboard */}
       <Route path="/dashboard/writer" element={<ProtectedRoute allowedRoles={['script writer', 'admin']}><WriterLayout /></ProtectedRoute>}>
         <Route index element={<WriterDashboard />} />
+        <Route path="profile" element={<UserProfile />} />
+      </Route>
+
+      {/* Model Dashboard */}
+      <Route path="/dashboard/model" element={<ProtectedRoute allowedRoles={['model', 'admin']}><ModelLayout /></ProtectedRoute>}>
+        <Route index element={<ModelDashboard />} />
         <Route path="profile" element={<UserProfile />} />
       </Route>
 

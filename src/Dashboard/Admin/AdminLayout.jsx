@@ -128,7 +128,7 @@ export default function AdminLayout() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col h-screen overflow-y-auto">
         {/* Top Header */}
-        <header className="flex items-center justify-between px-4 lg:px-4 py-2 lg:py-3 border-b border-gray-200 bg-white z-10 sticky top-0">
+        <header className="flex items-center justify-between px-4 lg:px-4 py-2 lg:py-3 border-b border-gray-200 bg-white z-50 sticky top-0">
           <div className="flex items-center gap-4">
             <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-gray-500 hover:text-black">
               <FiMenu className="w-6 h-6" />

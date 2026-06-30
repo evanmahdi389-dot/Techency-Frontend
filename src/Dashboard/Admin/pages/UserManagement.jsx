@@ -91,7 +91,7 @@ export default function UserManagement() {
         <button
           onClick={openCreate}
           id="create-user-btn"
-          className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#002546] to-[#00478A] hover:shadow-lg hover:-translate-y-0.5 text-white text-sm font-semibold rounded-[10px] transition-all shadow-[0px_8px_20px_rgba(0,37,70,0.15)]"
+          className="cursor-pointer flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#002546] to-[#00478A] hover:shadow-lg hover:-translate-y-0.5 text-white text-sm font-semibold rounded-[10px] transition-all shadow-[0px_8px_20px_rgba(0,37,70,0.15)]"
         >
           <FiPlus className="w-4 h-4" />
           Add User

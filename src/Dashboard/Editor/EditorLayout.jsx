@@ -50,8 +50,7 @@ export default function EditorLayout() {
               end={end}
               onClick={() => setSidebarOpen(false)}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-[5px] text-sm font-medium transition-all group ${
-                  isActive ? 'bg-blue-600/15 text-blue-400' : 'text-gray-400 hover:text-white hover:bg-white/5'
+                `flex items-center gap-3 px-4 py-3 rounded-[5px] text-sm font-medium transition-all group ${isActive ? 'bg-blue-600/15 text-blue-400' : 'text-gray-400 hover:text-white hover:bg-white/5'
                 }`
               }
             >
@@ -66,7 +65,7 @@ export default function EditorLayout() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col h-screen overflow-y-auto">
         {/* Top Header */}
-        <header className="flex items-center justify-between px-4 lg:px-8 py-4 border-b border-white/5 bg-[#0e0e0e] z-10 sticky top-0">
+        <header className="flex items-center justify-between px-4 lg:px-8 py-4 border-b border-white/5 bg-[#0e0e0e] z-50 sticky top-0">
           <div className="flex items-center gap-4">
             <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-gray-400 hover:text-white">
               <FiMenu className="w-6 h-6" />
@@ -84,7 +83,7 @@ export default function EditorLayout() {
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-blue-500 rounded-full"></span>
             </button>
             <div className="relative">
-              <div 
+              <div
                 className="flex items-center gap-3 pl-4 border-l border-white/10 cursor-pointer"
                 onClick={() => setProfileOpen(!profileOpen)}
               >
@@ -100,7 +99,7 @@ export default function EditorLayout() {
                   )}
                 </div>
               </div>
-              
+
               {/* Profile Dropdown */}
               {profileOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-lg py-1 z-50">

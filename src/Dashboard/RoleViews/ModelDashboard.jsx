@@ -1,0 +1,1 @@
+import React from "react"; export default function ModelDashboard() { return <div className="p-8 text-white"><h1 className="text-2xl font-bold">Model Dashboard</h1><p>Welcome to your panel.</p></div>; }
